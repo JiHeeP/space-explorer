@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>우주 탐험대 — 블록 코딩</title>
+<style>
+:root{--bg:#080e20;--panel:#121b36;--panel2:#0c142b;--line:#2b3a68;--ink:#eaf0ff;--sub:#9fadd0;--cy:#5ee6ff;--gold:#ffd66b;--bad:#ff6b78;--ok:#5fe3a1;--pink:#ff8ad8}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Pretendard,"Noto Sans KR","Malgun Gothic","Apple SD Gothic Neo",sans-serif;font-size:16px;line-height:1.5}
+body{background:radial-gradient(1200px 500px at 80% -10%,#1a2a5c 0,transparent 60%),radial-gradient(900px 500px at -10% 110%,#2a1650 0,transparent 55%),var(--bg);min-height:100vh}
+button{font:inherit;cursor:pointer;border:1.5px solid var(--line);background:#19244a;color:var(--ink);border-radius:10px;padding:7px 13px;font-weight:700}
+button:hover:not(:disabled){border-color:var(--cy)}
+button:disabled{opacity:.38;cursor:default}
+button.primary{background:var(--cy);color:#04202a;border-color:var(--cy)}
+button.primary:hover:not(:disabled){background:#9af1ff}
+button.soft{background:transparent;font-weight:600;color:var(--sub)}
+header{display:flex;align-items:center;gap:10px;padding:9px 18px;border-bottom:1.5px solid var(--line);background:rgba(8,14,32,.8)}
+header h1{font-size:19px;margin:0;letter-spacing:.5px}
+header h1 b{color:var(--cy)}
+header .sp{flex:1}
+.tag{font-size:13px;font-weight:700;border:1.5px solid var(--line);border-radius:999px;padding:2px 10px;color:var(--sub)}
+main{padding:12px 18px 40px;max-width:1400px;margin:0 auto}
+h2{margin:0;font-size:22px;letter-spacing:-.3px}
+.muted{color:var(--sub)}.small{font-size:13px}
+
+/* 첫 화면 */
+.hero{display:grid;grid-template-columns:1.25fr 1fr;gap:20px;align-items:center;margin:10px 0 18px}
+.eyebrow{color:var(--cy);font-weight:800;letter-spacing:3px;font-size:12px}
+.hero h2{font-size:36px;line-height:1.2;margin-top:6px}
+.hero h2 span{color:var(--gold)}
+.hero p{margin:10px 0 0;font-size:17px;color:var(--sub)}
+.startbox{display:flex;gap:8px;align-items:center;margin-top:16px;flex-wrap:wrap}
+.startbox input{font:inherit;font-weight:700;width:76px;padding:7px 9px;border:1.5px solid var(--line);border-radius:10px;background:#0a1227;color:var(--ink)}
+.panel{background:var(--panel);border:1.5px solid var(--line);border-radius:14px;padding:11px}
+.panel h3{margin:0 0 8px;font-size:13px;color:var(--sub);letter-spacing:.5px;font-weight:700}
+.route{display:grid;gap:6px}
+.route div{display:flex;gap:9px;align-items:center;font-weight:700;font-size:14px}
+.route b{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#0a1227;border:1.5px solid var(--cy);color:var(--cy);font-size:12px}
+
+.zone{margin-top:16px}
+.zone h3{margin:0 0 8px;font-size:15px;display:flex;gap:9px;align-items:center}
+.zone h3 b{background:var(--cy);color:#04202a;border-radius:7px;padding:1px 9px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:9px}
+.mcard{text-align:left;padding:10px 12px;border-radius:13px;display:block;width:100%;font-weight:600;min-height:82px;background:var(--panel)}
+.mcard .n{font-size:12px;color:var(--cy);font-weight:800;letter-spacing:.5px}
+.mcard strong{display:block;font-size:16.5px;margin:1px 0 3px}
+.mcard small{color:var(--sub)}
+.mcard.done{border-color:var(--ok)}
+.mcard.done small{color:var(--ok);font-weight:700}
+.mcard.locked{opacity:.4;border-style:dashed}
+
+/* 미션 화면 */
+.ghead{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.ghead .sp{flex:1}
+.goal{background:linear-gradient(90deg,#14224a,#101a38);border:1.5px solid var(--cy);border-radius:13px;padding:8px 14px;margin-bottom:10px;font-size:17px;font-weight:700;display:flex;gap:14px;align-items:center}
+.goal>div:first-child{flex:1}
+.goal small{display:block;font-weight:500;color:var(--sub);font-size:14px;margin-top:2px}
+.layout{display:grid;grid-template-columns:350px 282px minmax(320px,1fr);gap:12px;align-items:start}
+canvas#cv{width:100%;aspect-ratio:1;display:block;border:1.5px solid var(--line);border-radius:11px;background:#050a18}
+.vars{display:flex;gap:7px;margin-top:8px;flex-wrap:wrap}
+.var{border:1.5px solid var(--line);border-radius:9px;padding:3px 10px;background:var(--panel2);font-weight:700;font-size:14px}
+.var b{display:inline-block;min-width:26px;text-align:center;background:var(--gold);color:#2a2000;border-radius:5px;margin-left:5px;padding:0 5px}
+.var.cond b{background:#4c66e8;color:#fff}
+.var{display:inline-flex;align-items:center;gap:3px;white-space:nowrap}
+.var.cond{flex:1 1 100%;white-space:normal}
+.var.cond b{white-space:normal;text-align:left;padding:1px 8px}
+.status{margin-top:8px;padding:9px 11px;border-radius:10px;background:var(--panel2);border:1.5px solid var(--line);font-size:15px;min-height:46px}
+.status.bad{border-color:var(--bad);background:#2a1422}
+.status.ok{border-color:var(--ok);background:#0f2a25}
+.askbox{margin-top:8px;padding:10px 11px;border-radius:10px;border:2px solid var(--pink);background:#2a1436;display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-weight:700}
+.askbox input{font:inherit;font-weight:700;width:90px;padding:6px 8px;border:1.5px solid var(--line);border-radius:8px;background:#fff;color:#111}
+.examples{display:flex;gap:8px}
+.ex{border:1.5px dashed var(--line);border-radius:10px;padding:6px;background:var(--panel2);text-align:center;font-size:12px;font-weight:700;width:124px;line-height:1.3;white-space:nowrap}
+.ex canvas{width:50px;height:50px;display:block;margin:0 auto}
+.runbar{display:flex;gap:7px;margin-top:8px}
+.runbar button{flex:1;white-space:nowrap;padding:7px 6px}
+.tools{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-top:8px}
+
+/* 블록 */
+.blk{--c:#888;color:#fff;font-weight:700;font-size:15px;margin:4px 0;width:max-content;max-width:100%;border-radius:9px;user-select:none;-webkit-user-select:none}
+.blk.move{--c:#a14fdc}.blk.flow{--c:#1497c2}.blk.data{--c:#cf3fca}.blk.look{--c:#e23f60}
+.bh{background:var(--c);border-radius:9px;padding:7px 10px;display:flex;align-items:center;gap:5px;flex-wrap:wrap;cursor:grab;touch-action:none;position:relative}
+.cblk{background:var(--c);min-width:250px}
+.cblk>.list{margin-left:16px;background:#0b1330;border-radius:7px 0 0 7px;min-height:42px;padding:3px 7px}
+#ws .cblk>.list:empty::before{content:"여기에 블록 넣기";display:block;color:#7f8db8;font-weight:500;font-size:13px;padding:8px 4px}
+.bm{padding:4px 10px}.bf{height:11px}
+.blk.on>.bh{outline:4px solid var(--gold);outline-offset:1px}
+.blk .del{border:0;background:rgba(0,0,0,.25);color:#fff;border-radius:999px;width:20px;height:20px;padding:0;line-height:18px;font-size:13px;margin-left:5px}
+.blk .del:hover{background:rgba(0,0,0,.55)!important}
+.slot{display:inline-flex;align-items:center}
+.slot.num,.slot.txt{background:#fff;color:#141a2e;border-radius:999px;min-width:34px;padding:1px 9px;justify-content:center;cursor:text;border:2px solid transparent}
+.slot.txt{border-radius:6px}
+.slot.hot.num,.slot.hot>.rep{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold)}
+.rep{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:2px 10px;font-size:14px;font-weight:700;color:#fff;border:2px solid rgba(255,255,255,.75);cursor:pointer}
+.r-ans,.r-var{background:#cf3fca}.r-calc{background:#e9a50c;color:#2a2000}
+.cond{display:inline-flex;align-items:center;gap:4px;background:#4c66e8;border:2px solid rgba(255,255,255,.7);border-radius:7px;padding:2px 6px}
+.blk select,.rep select{font:inherit;font-weight:700;border-radius:6px;border:0;padding:1px 2px;background:#fff;color:#141a2e}
+.op{background:#fff;color:#141a2e;border-radius:6px;padding:0 6px}
+input.edit{font:inherit;font-weight:700;width:64px;border:0;outline:0;text-align:center;background:transparent;color:#141a2e}
+.slot.txt input.edit{width:130px}
+.panel.pal{position:sticky;top:8px;max-height:calc(100vh - 16px);overflow-y:auto}
+.pal .blk,.pal .rep{cursor:grab;touch-action:none}
+.pal .rep{margin:3px 4px 3px 0}
+.pal h4{margin:7px 0 2px;font-size:12px;color:var(--sub)}
+.pal h4:first-child{margin-top:0}
+.pal .blk .slot,.pal .blk select{pointer-events:none}
+.pal .cblk{min-width:0}
+.pal .blk{font-size:13px;margin:3px 0}
+.pal .bh{flex-wrap:nowrap;white-space:nowrap;padding:5px 8px;gap:4px}
+.pal .cblk>.list{min-height:12px;padding:0}
+.pal .bm{padding:2px 8px}.pal .bf{height:7px}
+.pal .slot.num,.pal .slot.txt{min-width:28px;padding:0 7px}
+#ws{min-height:330px;padding-bottom:50px}
+.hat{background:#17a85a;color:#fff;font-weight:700;font-size:15px;border-radius:14px 14px 9px 9px;padding:7px 12px;width:max-content}
+.list.root{min-height:80px}
+.marker{height:6px;border-radius:3px;background:var(--gold);margin:3px 0;width:180px;box-shadow:0 0 10px var(--gold)}
+.dghost{position:fixed;z-index:50;pointer-events:none;opacity:.9;transform:rotate(-1.5deg)}
+.empty{color:var(--sub);font-weight:500;font-size:14px;padding:10px 4px}
+.code-ro{background:var(--panel2);border:1.5px solid var(--line);border-radius:11px;padding:8px 10px;margin:8px 0;overflow:auto}
+.code-ro .bh{cursor:default}
+
+/* 병기(번역) — 한국어 아래 작은 글씨 */
+.tr{display:block;font-weight:500;line-height:1.35;margin-top:2px;opacity:.92}
+.tr[lang=zh],.tri[lang=zh],.ptr[lang=zh]{font-size:.85em}
+.tr[lang=ru],.tri[lang=ru],.ptr[lang=ru]{font-size:.8em}
+.tri{font-weight:500;margin-left:6px;opacity:.9}
+h2 .tr{font-size:.6em!important;margin-top:4px}
+.hero h2 .tr{font-size:.5em!important;line-height:1.3}
+.goal .tr{font-weight:600}
+.ptr{font-weight:500;color:var(--ink);opacity:.85;margin:-1px 0 5px 3px;line-height:1.25}
+button .tr{margin-top:0}
+.runbar button{line-height:1.25}
+.route .rt{font-weight:700}.route .rd{color:var(--sub);font-weight:500}
+.zone h3{flex-wrap:wrap}
+body[data-lang=zh] #ws .cblk>.list:empty::before{content:"여기에 블록 넣기 · 把积木放这里"}
+body[data-lang=ru] #ws .cblk>.list:empty::before{content:"여기에 블록 넣기 · Положи блок сюда"}
+.langpick{max-width:860px;margin:6vh auto 0;text-align:center}
+.langpick h2{font-size:30px;margin:8px 0 22px}
+.langs{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}
+.langs button{padding:26px 10px;border-radius:16px;background:var(--panel)}
+.langs button b{display:block;font-size:23px}
+.langs button span{display:block;color:var(--sub);font-weight:500;margin-top:6px}
+.langs button.sel{border-color:var(--cy);box-shadow:0 0 22px rgba(94,230,255,.3)}
+.ex{white-space:normal!important;width:auto!important;min-width:118px}
+.askbox>span:first-child{flex:1;min-width:150px}
+#cert .tr{color:#1a2036;opacity:1}
+#cert h2 .tr{letter-spacing:2px;font-size:.36em!important}
+
+/* 배지 · 수료증 */
+.badgebox{display:flex;gap:18px;align-items:center;margin:10px 0 4px;padding:10px 14px;border-radius:13px;background:var(--panel2);border:1.5px solid var(--line)}
+.badgebox .bt{font-weight:800;font-size:18px}
+.badgebox .bt small{display:block;font-weight:600;color:var(--sub);font-size:14px}
+.sparks{position:relative;flex:none}
+.pop{display:block;animation:pop .9s cubic-bezier(.2,1.6,.4,1) both;filter:drop-shadow(0 0 16px rgba(255,214,107,.55))}
+@keyframes pop{0%{transform:scale(0) rotate(-200deg);opacity:0}70%{transform:scale(1.25) rotate(8deg);opacity:1}100%{transform:scale(1) rotate(0)}}
+.sparks i{position:absolute;left:50%;top:50%;width:7px;height:7px;margin:-3px;border-radius:50%;background:var(--gold);animation:fly 1s .35s ease-out both}
+@keyframes fly{0%{transform:rotate(var(--a)) translateX(10px);opacity:1}100%{transform:rotate(var(--a)) translateX(86px);opacity:0}}
+.medal{margin-top:8px;padding:9px 14px;border-radius:13px;border:1.5px solid var(--gold);background:#2a2410;font-weight:800;color:var(--gold);display:flex;gap:12px;align-items:center}
+.strip{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
+.strip svg{display:block}
+.chars{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin:14px 0}
+.chars button{font-size:44px;padding:12px 0;line-height:1.1}
+.chars button.sel{border-color:var(--gold);background:#2a2410;box-shadow:0 0 18px rgba(255,214,107,.4)}
+#cert{max-width:820px;margin:0 auto;background:#fffdf5;color:#1a2036;border:4px double #1a2036;border-radius:6px;padding:30px 44px 26px;text-align:center;box-shadow:0 0 60px rgba(94,230,255,.2)}
+#cert .ct{letter-spacing:10px;font-size:15px;font-weight:800;color:#51608c}
+#cert h2{font-size:44px;letter-spacing:14px;margin:4px 0 6px;color:#1a2036}
+#cert .ch{font-size:84px;line-height:1.15}
+#cert .who{font-size:26px;font-weight:800;margin-top:2px}
+#cert .nm{margin:10px auto 0;font-size:18px;font-weight:700}
+#cert .nm span{display:inline-block;width:220px;border-bottom:2px solid #1a2036;height:26px;vertical-align:bottom}
+#cert p{font-size:18px;line-height:1.85;margin:16px auto 10px;max-width:620px}
+#cert .skills{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:6px 0 12px}
+#cert .skills b{border:2px solid #1a2036;border-radius:999px;padding:2px 14px;font-size:15px}
+#cert .strip{justify-content:center}
+#cert .ft{display:flex;justify-content:space-between;align-items:flex-end;margin-top:16px;font-weight:700}
+#cert .ft div:last-child{font-size:20px;letter-spacing:4px}
+.blk.bad>.bh{outline:4px solid var(--bad);outline-offset:1px}
+@media (prefers-reduced-motion:reduce){.pop,.sparks i{animation:none}}
+@media print{body{background:#fff!important}header,.noprint{display:none!important}main{padding:0;max-width:none}#cert{box-shadow:none;margin-top:10mm}}
+
+/* 모달 */
+dialog{border:1.5px solid var(--cy);border-radius:16px;padding:20px 22px;max-width:660px;width:calc(100% - 30px);background:#0f1833;color:var(--ink);box-shadow:0 0 60px rgba(94,230,255,.18)}
+dialog::backdrop{background:rgba(3,6,16,.72)}
+dialog h2{margin-bottom:8px}
+.mact{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.opts{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:10px}
+.opts.two{grid-template-columns:repeat(2,1fr)}
+.opt{padding:8px;text-align:center;font-weight:700;min-height:60px}
+.opt canvas{width:100%;aspect-ratio:1;display:block}
+.opt.right{border-color:var(--ok);background:#0f2a25}
+.opt.wrong{border-color:var(--bad);background:#2a1422}
+.frame{border:1.5px solid var(--gold);border-radius:11px;padding:10px 12px;background:var(--panel2);margin-top:12px;font-weight:700;line-height:2.2}
+.frame select{font:inherit;font-weight:700;border:1.5px solid var(--gold);border-radius:6px;padding:1px 4px;background:#fff7d6;color:#141a2e}
+.frame select.bad{border-color:var(--bad);background:#ffd9dd}
+.tf{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.tf div{border-radius:10px;padding:8px 10px;font-weight:700;border:1.5px solid var(--line);background:var(--panel2)}
+.tf .t b{color:var(--ok)}.tf .f b{color:var(--bad)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{border:1.5px solid var(--line);padding:5px 8px;text-align:left}
+th{background:#19244a}
+.quiz{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.qrow{background:var(--panel2);border:1.5px solid var(--line);border-radius:11px;padding:9px 12px;margin-bottom:8px;font-weight:700;font-size:17px}
+.qrow small{display:block;color:var(--sub);font-weight:500;font-size:13px}
+.qrow input,.qrow select{font:inherit;font-weight:700;width:86px;padding:4px 7px;border:1.5px solid var(--gold);border-radius:7px;background:#fff7d6;color:#141a2e;text-align:center}
+.qrow select{width:auto}
+.qrow .bad{border-color:var(--bad);background:#ffd9dd}
+.qrow .good{border-color:var(--ok);background:#d6ffe9}
+.shapes{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.shapes div{border:1.5px solid var(--line);border-radius:11px;background:var(--panel2);padding:6px;text-align:center;font-weight:700;font-size:14px}
+.shapes canvas{width:100%;aspect-ratio:1}
+.entry .blk{margin:3px 0}
+.entry .hatb{--c:#17a85a}.entry .pen{--c:#f08a00}
+@media(max-width:1050px){.layout{grid-template-columns:1fr 1fr}.layout>.stage{grid-column:1/-1}.hero{grid-template-columns:1fr}.quiz{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <h1>◈ <b>우주 탐험대</b></h1><span class="tag">블록 코딩 · 순차 · 반복 · 선택 · 변수 · 계산</span>
+  <span class="sp"></span><span id="pilotTag" class="tag"></span>
+  <button class="soft" id="langBtn" onclick="langScreen()">🌐</button><button class="soft" id="helpBtn" onclick="help()">도움말</button>
+</header>
+<main id="app"></main>
+<dialog id="modal"></dialog>
+<script>
+'use strict';
+const $=id=>document.getElementById(id),clone=x=>JSON.parse(JSON.stringify(x));
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const VARNAME='변의 수';
+let uid=0;
+
+/* ───────── 블록 정의 ───────── */
+const DEF={
+ step:{cat:'move',parts:['앞으로 1칸 가기'],args:{}},
+ move:{cat:'move',parts:['이동 방향으로 ',['n'],' 만큼 움직이기'],args:{n:100}},
+ right:{cat:'move',parts:['오른쪽으로 ',['a'],'° 돌기'],args:{a:90}},
+ left:{cat:'move',parts:['왼쪽으로 ',['a'],'° 돌기'],args:{a:90}},
+ repeat:{cat:'flow',parts:[['n'],' 번 반복하기'],args:{n:4},c:1},
+ if:{cat:'flow',parts:['만일 ',['cond','c'],' (이)라면'],args:{cond:{a:0,op:'>',b:10}},c:1},
+ ifelse:{cat:'flow',parts:['만일 ',['cond','c'],' (이)라면'],args:{cond:{a:0,op:'>',b:10}},c:2},
+ ask:{cat:'data',parts:[['text','t'],' 을(를) 묻고 대답 기다리기'],args:{text:'몇이야?'}},
+ setvar:{cat:'data',parts:[VARNAME+' 를 ',['v'],' (으)로 정하기'],args:{v:4}},
+ say:{cat:'look',parts:[['text','t'],' 을(를) 말하기'],args:{text:'안녕!'}}
+};
+const B=(t,args,body,els)=>{const b={id:++uid,t,args};if(body)b.body=body;if(els)b.els=els;return b};
+const make=t=>B(t,clone(DEF[t].args),DEF[t].c?[]:undefined,DEF[t].c===2?[]:undefined);
+const ANS={v:'ans'},VAR={v:'var'},CALC=(a,b,op='÷')=>({v:'calc',a,op,b});
+const sp=()=>B('step',{}),mv=n=>B('move',{n}),rt=a=>B('right',{a}),lt=a=>B('left',{a}),rep=(n,body)=>B('repeat',{n},body),ask=text=>B('ask',{text}),say=text=>B('say',{text}),setv=v=>B('setvar',{v});
+const iff=(a,op,b,body)=>B('if',{cond:{a,op,b}},body),ife=(a,op,b,body,els)=>B('ifelse',{cond:{a,op,b}},body,els);
+const poly=(n,len)=>[rep(n,[mv(len),rt(360/n)])];
+const gate=()=>[ask('에너지가 얼마야?'),ife(ANS,'>',10,[mv(200)],[say('에너지가 모자라요')])];
+const machine=()=>[ask('변이 몇 개야?'),setv(ANS),rep(VAR,[mv(60),rt(CALC(360,VAR))])];
+
+/* ───────── 미션 ───────── */
+const ZONES=[['움직임 마스터','적의 레이저를 피해 기지로'],['방어막 그리기','칸이 없는 우주 · 각도 숫자'],['선택','묻고, 비교하고, 갈라지기'],['변수 · 계산','값을 담고, 계산해서 쓰기']];
+const GRID=['step','right','left','repeat'],MOVES=['move','right','left','repeat'];
+const TF='<b>참</b>은 「맞다」, <b>거짓</b>은 「아니다(틀리다)」라는 뜻이야. ';
+const M=[
+ /* 1구역: 움직임 마스터 (칸 우주) */
+ {z:0,title:'첫 출동',goal:'레이저 사이를 지나 기지까지 가.',tip:'「앞으로 1칸 가기」 블록을 끌어서 오른쪽에 놓아. 기지까지 몇 칸인지 세어 봐.',
+  pal:['step'],reps:[],h:0,map:['.......','.XXXXX.','.S..G..','.XXXXX.','.......'],sol:()=>[sp(),sp(),sp()],max:5,short:3},
+ {z:0,title:'먼 기지',goal:'기지가 멀어. 블록은 3개까지만 쓸 수 있어.',tip:'「앞으로 n칸」 블록은 없어. 「6번 반복하기」 안에 「앞으로 1칸 가기」를 넣으면 6칸을 가.',
+  pal:['step','repeat'],reps:[],h:0,map:['E.......','XXXXXXXX','S.....G.','XXXXXXXX','.......E'],sol:()=>[rep(6,[sp()])],max:3,short:2},
+ {z:0,title:'오른쪽으로 꺾기',goal:'길이 꺾여 있어. 레이저에 닿기 전에 오른쪽으로 돌아.',tip:'돌기는 제자리에서 방향만 바꿔. 노란 부채꼴이 돈 만큼을 보여 줘. 90°는 옆으로 한 번 꺾는 거야.',
+  pal:GRID,reps:[],h:0,map:['S...XE','XXX.X.','..X.X.','..XGX.','..XXX.'],sol:()=>[rep(3,[sp()]),rt(90),rep(3,[sp()])],max:7,short:5},
+ {z:0,title:'왼쪽, 오른쪽',goal:'이번엔 왼쪽으로 한 번, 오른쪽으로 한 번 꺾어야 해.',tip:'왼쪽·오른쪽은 우주선이 보는 방향이 기준이야. 우주선의 뾰족한 앞을 봐.',
+  pal:GRID,reps:[],h:0,map:['.XXXXXX','.X...GX','.X.XXXX','S..X..E','XXXX...'],sol:()=>[rep(2,[sp()]),lt(90),rep(2,[sp()]),rt(90),rep(3,[sp()])],max:10,short:8},
+ {z:0,title:'뒤로 도망쳐',goal:'적이 바로 앞에 있어! 뒤로 돌아서 기지로 도망쳐.',tip:'돌기 블록의 숫자를 눌러서 바꿔 봐. 90°는 옆, 180°는 뒤야.',
+  pal:GRID,reps:[],h:0,map:['XXXXXXX','G...S.E','XXXXXXX'],sol:()=>[rt(180),rep(4,[sp()])],max:4,short:3,
+  predict:{q:'오른쪽으로 180° 돌면 우주선은 어디를 볼까?',code:()=>[rt(180)],opts:[{text:'오른쪽 옆'},{text:'뒤'},{text:'그대로 앞'}],ans:1,why:'90°가 옆이니까, 90° + 90° = 180°는 뒤야.'}},
+ {z:0,title:'비스듬히 빠져나가기',goal:'레이저 사이로 비스듬히 빠져나가.',tip:'90°의 절반만 돌면 비스듬한 방향이 돼. 90의 절반은 몇일까?',
+  pal:GRID,reps:[],h:0,map:['SX....','X.X...','.X.X..','..X.X.','...XG.','......'],sol:()=>[rt(45),rep(4,[sp()])],max:4,short:3},
+ {z:0,title:'계단 레이저',goal:'계단처럼 꺾인 길이야. 블록은 6개까지만 쓸 수 있어.',tip:'똑같이 되풀이되는 묶음을 찾아. 「가기 → 돌기 → 가기 → 돌기」가 몇 번 나오지?',
+  pal:GRID,reps:[],h:0,map:['S.XXX','X..XX','XX..X','XXXG.','XXX..'],sol:()=>[rep(3,[sp(),rt(90),sp(),lt(90)])],max:6,short:5},
+ {z:0,bug:1,title:'고장 난 항로',goal:'고장 난 코드야! 이대로 가면 레이저에 맞아. 숫자 하나만 고쳐 봐.',tip:'「한 블록씩」으로 실행해서 어디서 맞는지 봐. 꺾기 전에 몇 칸을 가야 할까?',
+  pal:GRID,reps:[],h:0,map:['S....X','XXXX.X','...X.X','E..XGX','...XXX'],pre:()=>[rep(3,[sp()]),rt(90),rep(3,[sp()])],sol:()=>[rep(4,[sp()]),rt(90),rep(3,[sp()])],max:7,short:5,
+  frame:['「앞으로 1칸 가기」를 ',['6','1','3'],'번 반복하면 6칸을 간다. 옆으로 꺾으려면 ',['90','180','45'],'°, 뒤로 돌려면 ',['180','90','360'],'° 돈다.']},
+ /* 2구역: 방어막 그리기 (칸 없는 우주) */
+ {z:1,title:'네모 방어막',goal:'기지 둘레에 네모 방어막을 쳐. 점선을 따라 그려. 한 변은 100이야.',
+  tip:'이제 칸이 없는 우주야. 숫자만큼 움직이고, 지나간 자리에 방어막이 생겨. 「움직이기 → 돌기」를 몇 번 하면 네모가 될까?',
+  pal:MOVES,reps:[],start:[190,190],sol:()=>poly(4,100),max:12,short:3},
+ {z:1,quiz:1,title:'360의 비밀',goal:'방어막을 다 그리면 우주선은 처음 방향으로 돌아와. 한 바퀴를 돈 거야.'},
+ {z:1,title:'세모 방어막',goal:'세모 방어막을 쳐. 점선을 따라 그려. 한 변은 100이야.',
+  tip:'방금 찾았지? 세모는 3번 돌아서 한 바퀴(360°)야. 3 × ? = 360.',
+  pal:MOVES,reps:[],start:[190,190],sol:()=>poly(3,100),max:9,short:3,
+  predict:{q:'이 코드를 실행하면 어떤 그림이 될까?',code:()=>[rep(3,[mv(100),rt(90)])],opts:[{draw:()=>[rep(3,[mv(100),rt(90)])]},{draw:()=>poly(4,100)},{draw:()=>poly(3,100)}],ans:0,why:'90°씩 3번 돌면 네모의 세 변만 그려져. 세모는 한 번에 더 많이 돌아야 해.'},
+  frame:['오른쪽으로 ',['90','60','100'],'° 돌기를 ',['4','3','2'],'번 반복하면 네모, ',['120','90','60'],'° 돌기를 ',['3','4','6'],'번 반복하면 세모가 된다.']},
+ /* 3구역: 선택 */
+ {z:2,title:'연료만큼 날기',goal:'우주선이 숫자를 묻고, 대답한 만큼 날아가게 해 봐.',
+  tip:'「대답」 블록을 끌어서 움직이기의 흰 숫자 칸 위에 놓아 봐.',
+  pal:['ask','move'],reps:['ans'],start:[60,240],sol:()=>[ask('연료가 얼마야?'),mv(ANS)],max:6,short:2,
+  input:{min:20,max:300},tests:[80,220],ex:[80,220],req:['ask']},
+ {z:2,title:'에너지 문',goal:'에너지가 10보다 크면 문을 지나가(200만큼 움직이기). 아니면 가만히 있어.',
+  tip:TF+'「15 > 10」은 참, 「5 > 10」은 거짓. 참일 때만 「만일」 안의 블록이 실행돼. 왼쪽 칸에 「대답」을 끌어 넣어.',
+  pal:['ask','if','move'],reps:['ans'],start:[70,240],gate:1,sol:()=>[ask('에너지가 얼마야?'),iff(ANS,'>',10,[mv(200)])],max:6,short:3,
+  input:{min:1,max:20},tests:[15,5,10],ex:[15,5],req:['ask'],
+  predict:{q:'대답이 15라면, 「15 > 10」은?',tf:1,code:()=>[ask('에너지가 얼마야?'),iff(ANS,'>',10,[mv(200)])],opts:[{text:'참 — 맞는 말이다'},{text:'거짓 — 틀린 말이다'}],ans:0,why:'15는 10보다 커. 맞는 말이니까 참이야. 참이면 「만일」 안의 블록이 실행돼.'}},
+ {z:2,title:'에너지가 모자라요',goal:'에너지가 10보다 크면 문을 지나가고, 아니면 말을 해.',
+  tip:'「만일 ~ 아니면」은 칸이 두 개야. 참(맞다)이면 위 칸, 거짓(아니다)이면 「아니면」 아래 칸이 실행돼.',
+  pal:['ask','ifelse','if','move','say'],reps:['ans'],start:[70,240],gate:1,sol:gate,max:7,short:4,
+  input:{min:1,max:20},tests:[15,5,10],ex:[15,5],req:['ask'],
+  predict:{q:'대답이 5라면 우주선은 무엇을 할까?',tf:1,code:gate,opts:[{text:'문을 지나간다'},{text:'「에너지가 모자라요」라고 말한다'},{text:'아무 일도 없다'}],ans:1,why:'「5 > 10」은 틀린 말, 곧 거짓이야. 거짓이면 「아니면」 아래 칸이 실행돼.'}},
+ {z:2,title:'방어막 고르기',goal:'대답이 4이면 네모, 아니면 세모 방어막을 쳐. 한 변은 100이야.',
+  tip:'기호를 = 로 바꿔 봐. 「대답 = 4」가 참이면 위 칸(네모), 거짓이면 아래 칸(세모)이야.',
+  pal:['ask','ifelse','if','move','right','left','repeat'],reps:['ans'],start:[190,190],
+  sol:()=>[ask('변이 몇 개야?'),ife(ANS,'=',4,poly(4,100),poly(3,100))],max:12,short:8,
+  input:{min:1,max:12},tests:[4,3],ex:[4,3],req:['ask']},
+ {z:2,bug:1,title:'고장 난 문',goal:'고장 난 코드야! 10보다 크면 지나가야 하는데 거꾸로 움직여. 한 곳만 고쳐 봐.',
+  tip:'「한 블록씩」을 누르고 15를 넣어 봐. 「15 < 10」은 참일까, 거짓일까?',
+  pal:['ask','ifelse','move','say'],reps:['ans'],start:[70,240],gate:1,
+  pre:()=>[ask('에너지가 얼마야?'),ife(ANS,'<',10,[mv(200)],[say('에너지가 모자라요')])],sol:gate,max:7,short:4,
+  input:{min:1,max:20},tests:[15,5,10],ex:[15,5],req:['ask'],
+  frame:['「15 > 10」은 맞는 말이라서 ',['참','거짓'],'이다. 「5 > 10」은 틀린 말이라서 ',['거짓','참'],'이다. 거짓이면 「',['아니면','만일','반복'],'」 아래 칸이 실행된다.']},
+ /* 4구역: 변수 · 계산 */
+ {z:3,title:'변수 상자',goal:'「변의 수」 상자에 4를 담고, 그 수만큼 반복해서 네모를 그려 봐. 한 변은 100이야.',
+  tip:'변수는 숫자를 담아 두는 상자야. 「변의 수」 블록을 끌어서 반복하기의 숫자 칸 위에 놓아.',
+  pal:['setvar','repeat','move','right','left'],reps:['var'],start:[190,190],sol:()=>[setv(4),rep(VAR,[mv(100),rt(90)])],max:8,short:4,req:['setvar','repeatvar']},
+ {z:3,title:'육각형 방어막',goal:'변의 수는 6. 각도는 직접 쓰지 말고 360 ÷ 변의 수 로 계산하게 해 봐. 한 변은 60이야.',
+  tip:'노란 「( ) ÷ ( )」 블록을 돌기의 각도 칸에 놓아. 그 안의 칸에 360과 「변의 수」를 넣어.',
+  pal:['setvar','repeat','move','right','left'],reps:['var','calc'],start:[210,150],sol:()=>[setv(6),rep(VAR,[mv(60),rt(CALC(360,VAR))])],max:8,short:4,req:['setvar','calcvar'],
+  predict:{q:'「변의 수」가 6일 때 우주선은 몇 도를 돌까?',code:()=>[setv(6),rt(CALC(360,VAR))],opts:[{text:'6°'},{text:'60°'},{text:'360°'}],ans:1,why:'360 ÷ 6 = 60 이야.'}},
+ {z:3,bug:1,title:'고장 난 오각형',goal:'오각형 방어막인데 선이 만나지 않아. 한 곳만 고쳐 봐.',
+  tip:'변의 수는 5인데, 각도 계산에는 어떤 수를 쓰고 있지?',
+  pal:['setvar','repeat','move','right','left'],reps:['var','calc'],start:[210,150],
+  pre:()=>[setv(5),rep(VAR,[mv(60),rt(CALC(360,6))])],sol:()=>[setv(5),rep(VAR,[mv(60),rt(CALC(360,VAR))])],max:8,short:4,req:['calcvar']},
+ {z:3,title:'방어막 기계 ①',goal:'숫자를 물어서, 그 수만큼 변이 있는 방어막을 쳐. 한 변은 60이야.',
+  tip:'순서: ① 묻기 → ② 「변의 수」를 「대답」으로 정하기 → ③ 「변의 수」번 반복해서 그리기. 각도는 360 ÷ 변의 수.',
+  pal:['ask','setvar','repeat','move','right','left'],reps:['ans','var','calc'],start:[210,110],sol:machine,max:10,short:5,
+  input:{min:3,max:12},tests:[3,5,8],ex:[3,6],req:['ask','setvar','calcvar']},
+ {z:3,title:'방어막 기계 완성',goal:'①에서 만든 코드야. 3보다 작은 수가 오면 그리지 말고 「그릴 수 없어요」라고 말하게 해.',
+  tip:'변이 1개, 2개인 도형은 없어. 「만일 ~ 아니면」을 놓고, 그리는 반복 블록을 「아니면」 아래 칸으로 옮겨.',
+  pal:['ask','setvar','ifelse','if','repeat','move','right','left','say'],reps:['ans','var','calc'],start:[210,110],pre:machine,
+  sol:()=>[ask('변이 몇 개야?'),setv(ANS),ife(VAR,'<',3,[say('그릴 수 없어요')],[rep(VAR,[mv(60),rt(CALC(360,VAR))])])],max:14,short:7,
+  input:{min:1,max:12},tests:[3,5,2,8],ex:[3,6,2],req:['ask','setvar','calcvar'],
+  frame:['「변의 수」 상자에 6을 담으면 우주선은 ',['6','3','60'],'번 반복한다. 도는 각도는 360 ÷ 6 = ',['60','6','120'],'° 이다.']},
+ {z:4,free:1,title:'자유 우주',goal:'마음대로 그려 봐. 반복 안에 반복을 넣으면 무늬가 돼.',
+  tip:'예: 「36번 반복」 안에 네모 그리기와 「오른쪽으로 10° 돌기」를 넣어 봐.',
+  pal:['ask','setvar','ifelse','if','repeat','move','right','left','say'],reps:['ans','var','calc'],start:[240,240],sol:()=>[],max:30,short:0}
+];
+const FREE=M.length-1,LAST=FREE-1,TOTAL=LAST+1;
+/* 칸 지도 읽기 */
+M.forEach(z=>{if(!z.map)return;const rows=z.map.length,cols=z.map[0].length,cell=Math.min(480/cols,480/rows),ox=(480-cols*cell)/2,oy=(480-rows*cell)/2,g={rows,cols,cell,ox,oy,bad:new Set(),enemy:new Set()};
+ z.map.forEach((r,y)=>[...r].forEach((c,x)=>{if(c==='S')g.start=[x,y];if(c==='G')g.goal=[x,y];if(c==='X'||c==='E')g.bad.add(x+','+y);if(c==='E')g.enemy.add(x+','+y)}));
+ g.pos=(x,y)=>[ox+(x+.5)*cell,oy+(y+.5)*cell];z.g=g});
+
+/* ───────── 언어 (한국어 / 한중 병기 / 한러 병기) ───────── */
+let LANG='';
+const BTR={
+ step:['前进1格','вперёд на 1 клетку'],move:['向移动方向移动（ ）','двигаться вперёд на ( )'],
+ right:['向右转（ ）°','повернуть направо на ( )°'],left:['向左转（ ）°','повернуть налево на ( )°'],
+ repeat:['重复（ ）次','повторить ( ) раз'],if:['如果〈 〉那么','если 〈 〉, то'],ifelse:['如果〈 〉那么 … 否则','если 〈 〉, то … иначе'],
+ ask:['询问（ ）并等待回答','спросить ( ) и ждать ответ'],setvar:['把「边数」设为（ ）','задать «число сторон» = ( )'],say:['说（ ）','сказать ( )'],
+ ans:['回答','ответ'],var:['边数','число сторон'],calc:['除法','деление']
+};
+const TRL=[
+/* 구역 */
+['움직임 마스터','运动大师','Мастер движения'],['적의 레이저를 피해 기지로','躲开敌人的激光，前往基地','Уклонись от лазеров и долети до базы'],
+['방어막 그리기','画护盾','Рисуем щит'],['칸이 없는 우주 · 각도 숫자','没有格子的宇宙 · 角度数字','Космос без клеток · числа углов'],
+['선택','选择','Выбор'],['묻고, 비교하고, 갈라지기','询问、比较、分支','Спросить, сравнить, выбрать путь'],
+['변수 · 계산','变量 · 计算','Переменная · вычисление'],['값을 담고, 계산해서 쓰기','存数值，计算后使用','Сохранить значение и вычислить'],
+/* 미션 1~8 */
+['첫 출동','第一次出动','Первый вылет'],['레이저 사이를 지나 기지까지 가.','穿过激光之间，到达基地。','Пролети между лазерами до базы.'],
+['「앞으로 1칸 가기」 블록을 끌어서 오른쪽에 놓아. 기지까지 몇 칸인지 세어 봐.','把「前进1格」积木拖到右边。数一数到基地有几格。','Перетащи блок «вперёд на 1 клетку» вправо. Посчитай, сколько клеток до базы.'],
+['먼 기지','遥远的基地','Далёкая база'],['기지가 멀어. 블록은 3개까지만 쓸 수 있어.','基地很远。最多只能用3个积木。','База далеко. Можно использовать не больше 3 блоков.'],
+['「앞으로 n칸」 블록은 없어. 「6번 반복하기」 안에 「앞으로 1칸 가기」를 넣으면 6칸을 가.','没有「前进n格」积木。把「前进1格」放进「重复6次」里，就能走6格。','Блока «вперёд на n клеток» нет. Положи «вперёд на 1 клетку» внутрь «повторить 6 раз» — и корабль пролетит 6 клеток.'],
+['오른쪽으로 꺾기','向右拐','Поворот направо'],['길이 꺾여 있어. 레이저에 닿기 전에 오른쪽으로 돌아.','路拐弯了。碰到激光之前向右转。','Путь поворачивает. Поверни направо, пока не задел лазер.'],
+['돌기는 제자리에서 방향만 바꿔. 노란 부채꼴이 돈 만큼을 보여 줘. 90°는 옆으로 한 번 꺾는 거야.','转弯只在原地改变方向。黄色扇形表示转了多少。90°就是向旁边拐一次。','Поворот меняет только направление, корабль остаётся на месте. Жёлтый сектор показывает угол поворота. 90° — это один поворот вбок.'],
+['왼쪽, 오른쪽','左转，右转','Налево, направо'],['이번엔 왼쪽으로 한 번, 오른쪽으로 한 번 꺾어야 해.','这次要向左拐一次，再向右拐一次。','Теперь нужно один раз повернуть налево и один раз направо.'],
+['왼쪽·오른쪽은 우주선이 보는 방향이 기준이야. 우주선의 뾰족한 앞을 봐.','左和右以飞船面对的方向为准。看飞船尖尖的前端。','«Налево» и «направо» считаются от того, куда смотрит корабль. Смотри на его острый нос.'],
+['뒤로 도망쳐','向后逃跑','Беги назад'],['적이 바로 앞에 있어! 뒤로 돌아서 기지로 도망쳐.','敌人就在前面！向后转，逃回基地。','Враг прямо впереди! Развернись и лети на базу.'],
+['돌기 블록의 숫자를 눌러서 바꿔 봐. 90°는 옆, 180°는 뒤야.','点击转弯积木里的数字来修改。90°是旁边，180°是后面。','Нажми на число в блоке поворота и измени его. 90° — вбок, 180° — назад.'],
+['오른쪽으로 180° 돌면 우주선은 어디를 볼까?','向右转180°后，飞船会朝向哪里？','Куда будет смотреть корабль, если повернуть направо на 180°?'],
+['오른쪽 옆','右边','вправо (вбок)'],['뒤','后面','назад'],['그대로 앞','还是前面','по-прежнему вперёд'],
+['90°가 옆이니까, 90° + 90° = 180°는 뒤야.','90°是旁边，所以 90° + 90° = 180° 就是后面。','90° — это вбок, значит 90° + 90° = 180° — это назад.'],
+['비스듬히 빠져나가기','斜着穿过去','Наискосок'],['레이저 사이로 비스듬히 빠져나가.','从激光之间斜着穿过去。','Пролети между лазерами наискосок.'],
+['90°의 절반만 돌면 비스듬한 방향이 돼. 90의 절반은 몇일까?','只转90°的一半，就是斜的方向。90的一半是多少？','Если повернуть на половину от 90°, корабль полетит наискосок. Сколько будет половина от 90?'],
+['계단 레이저','楼梯激光','Лазерная лестница'],['계단처럼 꺾인 길이야. 블록은 6개까지만 쓸 수 있어.','这条路像楼梯一样拐弯。最多只能用6个积木。','Путь идёт ступеньками. Можно использовать не больше 6 блоков.'],
+['똑같이 되풀이되는 묶음을 찾아. 「가기 → 돌기 → 가기 → 돌기」가 몇 번 나오지?','找出重复出现的一组动作。「前进 → 转弯 → 前进 → 转弯」出现了几次？','Найди группу, которая повторяется. Сколько раз встречается «вперёд → поворот → вперёд → поворот»?'],
+['고장 난 항로','出故障的航线','Сломанный маршрут'],['고장 난 코드야! 이대로 가면 레이저에 맞아. 숫자 하나만 고쳐 봐.','这段代码坏了！这样走会被激光打中。只改一个数字。','Код сломан! Так корабль попадёт под лазер. Исправь только одно число.'],
+['「한 블록씩」으로 실행해서 어디서 맞는지 봐. 꺾기 전에 몇 칸을 가야 할까?','用「单步」运行，看看在哪里被打中。拐弯前要走几格？','Запусти «по шагам» и посмотри, где корабль попадает под лазер. Сколько клеток нужно пролететь до поворота?'],
+['「앞으로 1칸 가기」를 □번 반복하면 6칸을 간다. 옆으로 꺾으려면 □°, 뒤로 돌려면 □° 돈다.','把「前进1格」重复□次，就走6格。向旁边拐要转□°，向后转要转□°。','Если повторить «вперёд на 1 клетку» □ раз, корабль пролетит 6 клеток. Чтобы повернуть вбок, нужно □°, чтобы развернуться назад — □°.'],
+/* 미션 9~11 */
+['네모 방어막','正方形护盾','Квадратный щит'],['기지 둘레에 네모 방어막을 쳐. 점선을 따라 그려. 한 변은 100이야.','在基地周围建一个正方形护盾。沿着虚线画。每条边长100。','Построй вокруг базы квадратный щит. Рисуй по пунктиру. Сторона — 100.'],
+['이제 칸이 없는 우주야. 숫자만큼 움직이고, 지나간 자리에 방어막이 생겨. 「움직이기 → 돌기」를 몇 번 하면 네모가 될까?','现在是没有格子的宇宙。按数字移动，经过的地方会出现护盾。「移动 → 转弯」做几次才是正方形？','Теперь в космосе нет клеток. Корабль летит на заданное число, и за ним остаётся щит. Сколько раз нужно сделать «двигаться → повернуть», чтобы получился квадрат?'],
+['360의 비밀','360的秘密','Секрет 360'],['방어막을 다 그리면 우주선은 처음 방향으로 돌아와. 한 바퀴를 돈 거야.','画完护盾后，飞船回到了开始的方向。它转了一整圈。','Когда щит готов, корабль снова смотрит туда же, куда в начале. Он сделал полный оборот.'],
+['한 바퀴는 360°야. 네모를 그릴 때 돈 각도를 모두 더해 봐.','一整圈是360°。把画正方形时转过的角度全部加起来。','Полный оборот — 360°. Сложи все углы, на которые корабль повернул, рисуя квадрат.'],
+['세모 방어막','三角形护盾','Треугольный щит'],['세모 방어막을 쳐. 점선을 따라 그려. 한 변은 100이야.','建一个三角形护盾。沿着虚线画。每条边长100。','Построй треугольный щит. Рисуй по пунктиру. Сторона — 100.'],
+['방금 찾았지? 세모는 3번 돌아서 한 바퀴(360°)야. 3 × ? = 360.','刚才找到了吧？三角形转3次是一整圈（360°）。3 × ? = 360。','Ты только что это нашёл: треугольник — это 3 поворота на полный оборот (360°). 3 × ? = 360.'],
+['이 코드를 실행하면 어떤 그림이 될까?','运行这段代码会画出什么图形？','Что нарисует этот код?'],
+['90°씩 3번 돌면 네모의 세 변만 그려져. 세모는 한 번에 더 많이 돌아야 해.','每次转90°转3次，只能画出正方形的三条边。三角形每次要转得更多。','Три поворота по 90° дают только три стороны квадрата. Для треугольника нужно поворачивать сильнее.'],
+['오른쪽으로 □° 돌기를 □번 반복하면 네모, □° 돌기를 □번 반복하면 세모가 된다.','向右转□°重复□次是正方形，转□°重复□次是三角形。','Поворот направо на □°, повторённый □ раза, даёт квадрат; поворот на □°, повторённый □ раза, даёт треугольник.'],
+/* 미션 12~16 */
+['연료만큼 날기','按燃料飞行','Лети по топливу'],['우주선이 숫자를 묻고, 대답한 만큼 날아가게 해 봐.','让飞船先问一个数字，再飞行回答的距离。','Сделай так, чтобы корабль спросил число и пролетел столько, сколько ответили.'],
+['「대답」 블록을 끌어서 움직이기의 흰 숫자 칸 위에 놓아 봐.','把「回答」积木拖到移动积木的白色数字格上。','Перетащи блок «ответ» на белое поле с числом в блоке движения.'],
+['에너지 문','能量门','Энергетические ворота'],['에너지가 10보다 크면 문을 지나가(200만큼 움직이기). 아니면 가만히 있어.','如果能量大于10，就通过大门（移动200）。否则不动。','Если энергия больше 10, пролети через ворота (двигаться на 200). Иначе стой на месте.'],
+[TF+'「15 > 10」은 참, 「5 > 10」은 거짓. 참일 때만 「만일」 안의 블록이 실행돼. 왼쪽 칸에 「대답」을 끌어 넣어.','<b>참（真）</b>的意思是「对」，<b>거짓（假）</b>的意思是「不对（错）」。「15 > 10」是真，「5 > 10」是假。只有为真时，「만일（如果）」里面的积木才会运行。把「回答」拖进左边的格子。','<b>참 (истина)</b> значит «верно», <b>거짓 (ложь)</b> значит «неверно». «15 > 10» — истина, «5 > 10» — ложь. Блоки внутри «만일 (если)» выполняются, только когда условие истинно. Перетащи «ответ» в левое поле.'],
+['대답이 15라면, 「15 > 10」은?','如果回答是15，「15 > 10」是？','Если ответ 15, то «15 > 10» — это?'],
+['참 — 맞는 말이다','真——说得对','истина — это верно'],['거짓 — 틀린 말이다','假——说得不对','ложь — это неверно'],
+['15는 10보다 커. 맞는 말이니까 참이야. 참이면 「만일」 안의 블록이 실행돼.','15比10大。说得对，所以是真。为真时，「如果」里面的积木会运行。','15 больше 10. Это верно, значит истина. Когда истина, выполняются блоки внутри «если».'],
+['에너지가 모자라요','能量不够','Не хватает энергии'],['에너지가 10보다 크면 문을 지나가고, 아니면 말을 해.','如果能量大于10就通过大门，否则说一句话。','Если энергия больше 10, пролети через ворота, иначе скажи фразу.'],
+['「만일 ~ 아니면」은 칸이 두 개야. 참(맞다)이면 위 칸, 거짓(아니다)이면 「아니면」 아래 칸이 실행돼.','「如果…否则」有两个格子。为真（对）时运行上面的格子，为假（不对）时运行「否则」下面的格子。','У блока «если … иначе» два отсека. Если истина (верно) — выполняется верхний, если ложь (неверно) — нижний, под «иначе».'],
+['대답이 5라면 우주선은 무엇을 할까?','如果回答是5，飞船会做什么？','Что сделает корабль, если ответ 5?'],
+['문을 지나간다','通过大门','пролетит через ворота'],['「에너지가 모자라요」라고 말한다','说「能量不够」','скажет «не хватает энергии»'],['아무 일도 없다','什么也不做','ничего не произойдёт'],
+['「5 > 10」은 틀린 말, 곧 거짓이야. 거짓이면 「아니면」 아래 칸이 실행돼.','「5 > 10」说得不对，也就是假。为假时运行「否则」下面的格子。','«5 > 10» — неверно, то есть ложь. Когда ложь, выполняется отсек под «иначе».'],
+['방어막 고르기','选择护盾','Выбери щит'],['대답이 4이면 네모, 아니면 세모 방어막을 쳐. 한 변은 100이야.','回答是4就建正方形护盾，否则建三角形护盾。每条边长100。','Если ответ 4 — построй квадратный щит, иначе — треугольный. Сторона — 100.'],
+['기호를 = 로 바꿔 봐. 「대답 = 4」가 참이면 위 칸(네모), 거짓이면 아래 칸(세모)이야.','把符号改成 = 。「回答 = 4」为真时运行上面的格子（正方形），为假时运行下面的格子（三角形）。','Поменяй знак на = . Если «ответ = 4» — истина, выполняется верхний отсек (квадрат), если ложь — нижний (треугольник).'],
+['고장 난 문','出故障的门','Сломанные ворота'],['고장 난 코드야! 10보다 크면 지나가야 하는데 거꾸로 움직여. 한 곳만 고쳐 봐.','这段代码坏了！大于10应该通过，现在却反过来了。只改一个地方。','Код сломан! Корабль должен пролетать, когда больше 10, а делает наоборот. Исправь только одно место.'],
+['「한 블록씩」을 누르고 15를 넣어 봐. 「15 < 10」은 참일까, 거짓일까?','点击「单步」并输入15。「15 < 10」是真还是假？','Нажми «по шагам» и введи 15. «15 < 10» — это истина или ложь?'],
+['「15 > 10」은 맞는 말이라서 □이다. 「5 > 10」은 틀린 말이라서 □이다. 거짓이면 「□」 아래 칸이 실행된다.','「15 > 10」说得对，所以是□。「5 > 10」说得不对，所以是□。为假时运行「□」下面的格子。','«15 > 10» — верно, поэтому это □. «5 > 10» — неверно, поэтому это □. Когда ложь, выполняется отсек под «□».'],
+['참','真','истина'],['거짓','假','ложь'],['아니면','否则','иначе'],['만일','如果','если'],['반복','重复','повтор'],
+/* 미션 17~22 */
+['변수 상자','变量盒子','Коробка-переменная'],['「변의 수」 상자에 4를 담고, 그 수만큼 반복해서 네모를 그려 봐. 한 변은 100이야.','把4放进「边数」盒子，然后重复这么多次，画出正方形。每条边长100。','Положи 4 в коробку «число сторон» и повтори столько раз, чтобы нарисовать квадрат. Сторона — 100.'],
+['변수는 숫자를 담아 두는 상자야. 「변의 수」 블록을 끌어서 반복하기의 숫자 칸 위에 놓아.','变量是存放数字的盒子。把「边数」积木拖到重复积木的数字格上。','Переменная — это коробка, в которой хранится число. Перетащи блок «число сторон» на поле с числом в блоке повторения.'],
+['육각형 방어막','六边形护盾','Шестиугольный щит'],['변의 수는 6. 각도는 직접 쓰지 말고 360 ÷ 변의 수 로 계산하게 해 봐. 한 변은 60이야.','边数是6。角度不要直接写，让它用 360 ÷ 边数 来计算。每条边长60。','Число сторон — 6. Не пиши угол сам, пусть он считается как 360 ÷ число сторон. Сторона — 60.'],
+['노란 「( ) ÷ ( )」 블록을 돌기의 각도 칸에 놓아. 그 안의 칸에 360과 「변의 수」를 넣어.','把黄色的「( ) ÷ ( )」积木放到转弯的角度格里。在里面的格子填入360和「边数」。','Положи жёлтый блок «( ) ÷ ( )» в поле угла у блока поворота. Внутрь поставь 360 и «число сторон».'],
+['「변의 수」가 6일 때 우주선은 몇 도를 돌까?','「边数」是6时，飞船每次转多少度？','На сколько градусов повернёт корабль, если «число сторон» равно 6?'],['360 ÷ 6 = 60 이야.','360 ÷ 6 = 60。','360 ÷ 6 = 60.'],
+['고장 난 오각형','出故障的五边形','Сломанный пятиугольник'],['오각형 방어막인데 선이 만나지 않아. 한 곳만 고쳐 봐.','这是五边形护盾，可是线没有连上。只改一个地方。','Это пятиугольный щит, но линии не сходятся. Исправь только одно место.'],
+['변의 수는 5인데, 각도 계산에는 어떤 수를 쓰고 있지?','边数是5，可是计算角度时用的是哪个数？','Число сторон — 5, а какое число стоит в вычислении угла?'],
+['방어막 기계 ①','护盾机器 ①','Машина щитов ①'],['숫자를 물어서, 그 수만큼 변이 있는 방어막을 쳐. 한 변은 60이야.','先问一个数字，再建一个有这么多条边的护盾。每条边长60。','Спроси число и построй щит с таким количеством сторон. Сторона — 60.'],
+['순서: ① 묻기 → ② 「변의 수」를 「대답」으로 정하기 → ③ 「변의 수」번 반복해서 그리기. 각도는 360 ÷ 변의 수.','顺序：① 询问 → ② 把「边数」设为「回答」→ ③ 重复「边数」次来画。角度是 360 ÷ 边数。','Порядок: ① спросить → ② задать «число сторон» = «ответ» → ③ повторить «число сторон» раз и рисовать. Угол — 360 ÷ число сторон.'],
+['방어막 기계 완성','完成护盾机器','Машина щитов готова'],['①에서 만든 코드야. 3보다 작은 수가 오면 그리지 말고 「그릴 수 없어요」라고 말하게 해.','这是在①里做的代码。如果数字小于3，不要画，让它说「그릴 수 없어요（画不出来）」。','Это код из ①. Если число меньше 3, пусть корабль не рисует, а скажет «그릴 수 없어요 (нельзя нарисовать)».'],
+['변이 1개, 2개인 도형은 없어. 「만일 ~ 아니면」을 놓고, 그리는 반복 블록을 「아니면」 아래 칸으로 옮겨.','没有只有1条边或2条边的图形。放上「如果…否则」，把画图的重复积木移到「否则」下面的格子里。','Фигур с 1 или 2 сторонами не бывает. Поставь «если … иначе» и перенеси блок повторения с рисованием в отсек под «иначе».'],
+['「변의 수」 상자에 6을 담으면 우주선은 □번 반복한다. 도는 각도는 360 ÷ 6 = □° 이다.','把6放进「边数」盒子，飞船就重复□次。转的角度是 360 ÷ 6 = □°。','Если положить 6 в коробку «число сторон», корабль повторит □ раз. Угол поворота: 360 ÷ 6 = □°.'],
+['자유 우주','自由宇宙','Свободный космос'],['마음대로 그려 봐. 반복 안에 반복을 넣으면 무늬가 돼.','随便画吧。把重复放进重复里，就能画出花纹。','Рисуй что хочешь. Если вложить повторение в повторение, получится узор.'],
+['예: 「36번 반복」 안에 네모 그리기와 「오른쪽으로 10° 돌기」를 넣어 봐.','例如：在「重复36次」里放入画正方形和「向右转10°」。','Например: внутрь «повторить 36 раз» положи рисование квадрата и «повернуть направо на 10°».'],
+['에너지가 얼마야?','能量是多少？','Сколько энергии?'],['몇이야?','是多少？','Сколько?'],['변이 몇 개야?','有几条边？','Сколько сторон?'],['연료가 얼마야?','燃料有多少？','Сколько топлива?'],
+/* 실행 중 안내 */
+['아직 대답이 없어. 「묻고 대답 기다리기」가 먼저 와야 해.','还没有回答。「询问并等待回答」要放在前面。','Ответа ещё нет. Сначала должен идти блок «спросить и ждать ответ».'],
+['「변의 수」 상자가 비어 있어. 「정하기」 블록이 먼저 와야 해.','「边数」盒子是空的。「设为」积木要放在前面。','Коробка «число сторон» пуста. Сначала должен идти блок «задать».'],
+['0으로는 나눌 수 없어.','不能除以0。','На 0 делить нельзя.'],
+['블록이 너무 많이 실행됐어. 반복 횟수를 확인해 봐.','运行的积木太多了。检查一下重复次数。','Выполнено слишком много блоков. Проверь число повторений.'],
+['여기는 칸이 없는 우주야. 「이동 방향으로 ~만큼 움직이기」를 써.','这里是没有格子的宇宙。请用「移动」积木。','Здесь нет клеток. Используй блок «двигаться на».'],
+['이 우주에서는 45°, 90°, 135°, 180°처럼 돌아야 칸에 맞아. 지금은 {0}°만큼 돌아가 있어.','在这个宇宙里要转45°、90°、135°、180°这样的角度才能对准格子。现在转了{0}°。','В этом космосе нужно поворачивать на 45°, 90°, 135°, 180°, чтобы попадать в клетки. Сейчас корабль повёрнут на {0}°.'],
+['우주 지도 밖으로 나갔어. 방향과 칸 수를 확인해 봐.','飞出宇宙地图了。检查方向和格数。','Корабль вылетел за карту. Проверь направление и число клеток.'],
+['적 우주선과 부딪혔어! 다른 방향으로 가야 해.','撞上敌人的飞船了！要走别的方向。','Столкновение с вражеским кораблём! Нужно лететь в другую сторону.'],
+['적의 레이저에 맞았어! 이 칸에 오기 전에 방향을 바꿔야 했을까, 칸 수가 달랐을까?','被敌人的激光打中了！是到这一格之前该转弯，还是格数不对？','Корабль попал под вражеский лазер! Нужно было повернуть раньше или число клеток было другим?'],
+['오른쪽으로 {0}° 돌았어.','向右转了{0}°。','Поворот направо на {0}°.'],['왼쪽으로 {0}° 돌았어.','向左转了{0}°。','Поворот налево на {0}°.'],
+['{0}번 중 {1}번째 반복','{0}次中的第{1}次重复','Повтор {1} из {0}'],
+['「{0}」은 <b>참</b>(맞다) → 위 칸을 실행해.','「{0}」是<b>真</b>（对）→ 运行上面的格子。','«{0}» — <b>истина</b> (верно) → выполняется верхний отсек.'],
+['「{0}」은 <b>거짓</b>(아니다) → 건너뛰어.','「{0}」是<b>假</b>（不对）→ 跳过。','«{0}» — <b>ложь</b> (неверно) → пропускаем.'],
+['「{0}」은 <b>거짓</b>(아니다) → 「아니면」 아래 칸을 실행해.','「{0}」是<b>假</b>（不对）→ 运行「否则」下面的格子。','«{0}» — <b>ложь</b> (неверно) → выполняется отсек под «иначе».'],
+['「변의 수」 상자에 {0}을(를) 담았어.','把{0}放进了「边数」盒子。','В коробку «число сторон» положено {0}.'],
+['참(맞다)','真（对）','истина (верно)'],['거짓(아니다)','假（不对）','ложь (неверно)'],
+['우주선이 먼저 물어봐야 해. 「묻고 대답 기다리기」 블록을 넣어 봐.','飞船要先提问。放入「询问并等待回答」积木。','Сначала корабль должен спросить. Добавь блок «спросить и ждать ответ».'],
+['그림은 맞아! 그런데 이번에는 「변의 수 를 ~로 정하기」 블록을 꼭 써야 해.','图画对了！不过这次一定要用「把边数设为～」积木。','Рисунок верный! Но в этот раз обязательно используй блок «задать число сторон».'],
+['그림은 맞아! 그런데 반복 횟수 칸에 숫자 대신 「변의 수」 블록을 넣어야 해.','图画对了！不过重复次数的格子里要放「边数」积木，不能直接写数字。','Рисунок верный! Но в поле числа повторений нужно поставить блок «число сторон», а не число.'],
+['그림은 맞아! 그런데 각도를 직접 쓰지 말고 「360 ÷ 변의 수」로 계산하게 해야 해. 변의 수가 바뀌어도 되게.','图画对了！不过角度不要直接写，要用「360 ÷ 边数」来计算。这样边数变了也能用。','Рисунок верный! Но не пиши угол сам — пусть он считается как «360 ÷ число сторон». Тогда код сработает и при другом числе сторон.'],
+/* 첫 화면 */
+['레이저를 피하고,<br><span>방어막 기계</span>를 완성하라.','躲开激光，完成<span>护盾机器</span>！','Уклонись от лазеров и собери <span>машину щитов</span>!'],
+['적들이 기지를 공격하고 있어. 우주선에게 블록으로 명령해서<br>공격을 피하고, 기지를 지킬 방어막을 만들자.','敌人正在攻击基地。用积木给飞船下命令，躲开攻击，做出保护基地的护盾。','Враги атакуют базу. Управляй кораблём с помощью блоков: уклоняйся от атак и построй щит для защиты базы.'],
+['내 번호','我的号码','Мой номер'],['이 번호로 출동','用这个号码出发','Старт с этим номером'],['{0}번 · {1} / {2} 성공','{0}号 · 成功 {1} / {2}','№{0} · пройдено {1} / {2}'],
+['탐험 항로','探险路线','Маршрут'],['가기 · 돌기 · 반복','前进 · 转弯 · 重复','вперёд · поворот · повтор'],['각도 숫자','角度数字','числа углов'],['참과 거짓','真和假','истина и ложь'],['방어막 기계','护盾机器','машина щитов'],
+['엔트리로 혼자 만들기','自己用Entry制作','Сделай сам в Entry'],['내 배지 {0} / {1}','我的徽章 {0} / {1}','Мои значки {0} / {1}'],['수료증','结业证书','Сертификат'],['엔트리 설계도 보기','查看Entry设计图','Схема для Entry'],
+['{0}구역','{0}区','Зона {0}'],['보너스','奖励','Бонус'],['마지막 미션을 끝내면 열려','完成最后一个任务后开放','Откроется после последней миссии'],
+['✓ 완료','✓ 完成','✓ готово'],['✓ 성공 · 짧은 코드 ★','✓ 成功 · 短代码 ★','✓ пройдено · короткий код ★'],['✓ 성공','✓ 成功','✓ пройдено'],['출동 가능','可以出发','можно начинать'],['앞 미션을 먼저','先完成前面的任务','сначала предыдущая'],
+['번호를 확인해 줘','请检查号码','Проверь номер'],['1부터 40 사이의 번호를 넣어 줘.','请输入1到40之间的号码。','Введи номер от 1 до 40.'],['닫기','关闭','Закрыть'],
+['앞 미션부터 하자','先做前面的任务吧','Сначала пройди предыдущую миссию'],['앞에서 배운 블록이 다음 미션에 쓰여.','前面学的积木后面的任务会用到。','Блоки из прошлых миссий понадобятся дальше.'],
+['도움말','帮助','Помощь'],
+/* 미션 화면 */
+['미션 지도','任务地图','Карта миссий'],['실행 화면','运行画面','Сцена'],['블록 꾸러미','积木盒','Блоки'],['블록 조립소','积木组装区','Сборка'],
+['움직임','运动','Движение'],['흐름','流程','Управление'],['자료','数据','Данные'],['생김새','外观','Внешность'],
+['값 블록 — 끌어서 흰 숫자 칸 위에','数值积木——拖到白色数字格上','Блоки-значения — перетащи на белое поле с числом'],
+['▶ 실행','运行','Пуск'],['⏭ 한 블록씩','单步','По шагам'],['⏭ 다음 블록','下一块','Следующий блок'],['■ 멈춤','停止','Стоп'],
+['대답','回答','ответ'],['변의 수 상자','边数盒子','коробка «число сторон»'],['조건','条件','условие'],['속도','速度','Скорость'],
+['자유롭게 실행해 봐.','自由运行吧。','Запускай как хочешь.'],
+['레이저(빨간 칸)와 적을 피해서 기지에 도착하면 성공!','躲开激光（红色格子）和敌人，到达基地就成功！','Уклонись от лазеров (красные клетки) и врагов и долети до базы — это победа!'],
+['먼저 실행해서 대답을 넣어 봐. 그러면 점선으로 목표가 나타나.','先运行并输入回答。然后目标会用虚线显示出来。','Сначала запусти и введи ответ. Тогда цель появится пунктиром.'],
+['점선이 목표야. 똑같이 그리면 성공!','虚线是目标。画得一样就成功！','Пунктир — это цель. Нарисуй так же — и победа!'],
+['생각 도우미','提示','Подсказка'],['되돌리기','撤销','Отменить'],['모두 비우기','全部清空','Очистить всё'],['처음 코드로','恢复原来的代码','Вернуть начальный код'],
+['★ 짧은 코드: {0}블록 이내','★ 短代码：{0}个积木以内','★ Короткий код: не больше {0} блоков'],
+['왼쪽 블록을 끌어서 여기에 놓아.<br>블록을 한 번 눌러도 맨 아래에 붙어.','把左边的积木拖到这里。<br>点一下积木也会接到最下面。','Перетащи блоки слева сюда.<br>Можно и просто нажать на блок — он встанет в конец.'],
+['대답이 {0}','回答是{0}','ответ {0}'],['대답이 {0} → 말하기','回答是{0} → 说话','ответ {0} → говорит'],['대답이 {0} → 가만히','回答是{0} → 不动','ответ {0} → стоит'],
+['처음 코드로 돌아왔어.','已恢复原来的代码。','Начальный код возвращён.'],['블록을 비웠어. 되돌리기로 다시 가져올 수 있어.','积木已清空。可以用撤销找回来。','Блоки убраны. Их можно вернуть кнопкой «Отменить».'],
+['멈췄어. 우주선은 처음 자리로 돌아왔어.','已停止。飞船回到了起点。','Остановлено. Корабль вернулся на старт.'],['{0}부터 {1} 사이의 숫자를 넣어 줘.','请输入{0}到{1}之间的数字。','Введи число от {0} до {1}.'],
+['대답하기','回答','Ответить'],['먼저 블록을 놓아 줘.','请先放积木。','Сначала поставь блоки.'],
+['속이 비어 있는 반복·만일 블록이 있어. 그 안에 블록을 넣어 줘.','有空的重复或如果积木。请在里面放积木。','Есть пустой блок повторения или «если». Положи в него блоки.'],
+['「다음 블록」을 누를 때마다 한 블록씩 실행돼.','每点一次「下一块」，就运行一个积木。','При каждом нажатии «Следующий блок» выполняется один блок.'],
+['실행 중… 노란 테두리가 지금 실행하는 블록이야.','运行中……黄色边框是正在运行的积木。','Выполняется… Жёлтая рамка — блок, который работает сейчас.'],
+['우주선이 묻고 있어. 숫자를 넣고 「대답하기」를 눌러.','飞船在提问。输入数字，然后点「回答」。','Корабль спрашивает. Введи число и нажми «Ответить».'],
+['실행 끝! 숫자를 바꿔서 다른 무늬도 만들어 봐.','运行结束！改改数字，做出别的花纹吧。','Готово! Поменяй числа и сделай другой узор.'],
+['<b>빨간 테두리 블록</b>에서 멈췄어. ','在<b>红色边框的积木</b>处停下了。','Остановка на <b>блоке с красной рамкой</b>. '],
+['<br><b>「생각 도우미」</b>에 설계도가 열렸어.','<br><b>「提示」</b>里的设计图已经打开。','<br>В <b>«Подсказке»</b> открылась схема.'],
+['아직 기지에 도착하지 못했어. 기지까지 몇 칸 남았는지 세어 봐.','还没到基地。数一数离基地还有几格。','Корабль ещё не на базе. Посчитай, сколько клеток осталось.'],
+['이럴 때는 움직여서 선을 그려야 해.','这种情况要移动并画线。','В этом случае нужно двигаться и рисовать линию.'],['이럴 때는 움직이지 않아야 해.','这种情况不应该移动。','В этом случае двигаться не нужно.'],
+['이럴 때는 우주선이 말을 해야 해.','这种情况飞船要说话。','В этом случае корабль должен сказать фразу.'],['이럴 때는 말하지 않아야 해.','这种情况不应该说话。','В этом случае говорить не нужно.'],
+['그림이 점선과 달라. 「한 블록씩」으로 어디서 달라지는지 찾아봐.','画的和虚线不一样。用「单步」找找从哪里开始不同。','Рисунок не совпадает с пунктиром. Запусти «по шагам» и найди, где начинается отличие.'],
+['대답이 {0}일 때: ','回答是{0}时：','Когда ответ {0}: '],
+['네 대답({0})은 맞았어! 그런데 검사 로봇이 <b>{1}</b>을(를) 넣으니 달라졌어. 지금 화면이 그때 모습이야.<br>','你的回答（{0}）对了！可是检查机器人输入<b>{1}</b>时不对了。现在画面显示的就是那时的样子。<br>','С твоим ответом ({0}) всё верно! Но когда робот-проверяющий ввёл <b>{1}</b>, получилось иначе. Сейчас на сцене показан этот случай.<br>'],
+['둥근 값 블록은 끌어서 흰 숫자 칸 위에 놓아 줘.','圆形的数值积木要拖到白色数字格上。','Круглый блок-значение перетащи на белое поле с числом.'],
+['블록 칸이 가득 찼어. 반복으로 묶거나 필요 없는 블록을 지워 봐.','积木位置满了。用重复合并，或者删掉不需要的积木。','Места для блоков больше нет. Объедини блоки повторением или удали лишние.'],
+/* 성공 · 배지 */
+['기지 도착! 공격을 모두 피했어.','到达基地！躲开了所有攻击。','Корабль на базе! Все атаки пройдены.'],['성공! 목표와 똑같아.','成功！和目标一样。','Получилось! Совпадает с целью.'],[' 성공!',' 成功！',' — пройдено!'],
+['레이저와 적을 모두 피해 기지에 도착했어.','躲开了所有激光和敌人，到达了基地。','Корабль уклонился от всех лазеров и врагов и долетел до базы.'],
+['네 대답과 검사 로봇의 대답 {0}개를 모두 통과했어.','你的回答和检查机器人的{0}个回答全部通过了。','Пройдены и твой ответ, и ответы робота-проверяющего ({0}).'],
+['네가 짠 코드가 목표와 똑같아.','你写的代码和目标一样。','Твой код даёт то же, что и цель.'],
+['{0}블록 이내로 줄이면 황금 배지! (지금 {1}블록)','减少到{0}个积木以内就能得到金徽章！（现在{1}个）','Сократи до {0} блоков — и получишь золотой значок! (сейчас {1})'],
+['배운 것을 문장으로 완성해 줘.','用句子总结学到的内容。','Закончи предложение о том, что ты узнал.'],
+['수료식으로 가기','去结业典礼','На вручение сертификата'],['다음 미션','下一个任务','Следующая миссия'],['코드 더 다듬기','继续改进代码','Улучшить код'],
+['빨간 칸을 다시 골라 봐.','重新选择红色的格子。','Выбери заново в красных полях.'],['고르기','选择','выбери'],
+['황금 배지 획득!','获得金徽章！','Золотой значок получен!'],['배지 획득!','获得徽章！','Значок получен!'],['황금 배지로 올라갔어!','升级为金徽章！','Значок стал золотым!'],['이미 받은 배지야. 다시 성공!','这个徽章已经有了。再次成功！','Этот значок у тебя уже есть. Снова пройдено!'],
+['모은 배지 {0} / {1}','收集的徽章 {0} / {1}','Собрано значков: {0} / {1}'],
+['{0}구역 「{1}」 훈장 획득! 이 구역의 미션을 모두 끝냈어.','获得{0}区勋章！这个区的任务全部完成了。','Медаль зоны {0} получена! Все миссии этой зоны пройдены.'],
+/* 도움 */
+['<b>참</b> = 맞다 (진짜)','<b>真</b> = 对','<b>истина</b> = верно'],['예: 15 &gt; 10 → 15는 10보다 크다. 맞아!','例：15 &gt; 10 → 15比10大。对！','Пример: 15 &gt; 10 → 15 больше 10. Верно!'],
+['<b>거짓</b> = 아니다 (틀리다)','<b>假</b> = 不对（错）','<b>ложь</b> = неверно'],['예: 5 &gt; 10 → 5는 10보다 크다? 아니야!','例：5 &gt; 10 → 5比10大？不对！','Пример: 5 &gt; 10 → 5 больше 10? Нет, неверно!'],
+['① 우주선의 뾰족한 쪽이 앞이야. 돌기는 제자리에서 방향만 바꿔.','① 飞船尖的一头是前面。转弯只在原地改变方向。','① Острый конец корабля — это перёд. Поворот меняет только направление.'],
+['② 「한 블록씩」으로 실행하면 어느 블록에서 달라지는지 보여.','② 用「单步」运行，就能看出是哪个积木出了问题。','② Запусти «по шагам» — и увидишь, на каком блоке всё идёт не так.'],
+['③ 맞은 칸 바로 앞에서 무엇을 했어야 할까?','③ 在被打中的格子前面，应该做什么？','③ Что нужно было сделать прямо перед клеткой, где попал лазер?'],
+['③ 점선과 방어막 선이 처음 갈라지는 곳을 봐.','③ 看看虚线和护盾线第一次分开的地方。','③ Посмотри, где линия щита впервые расходится с пунктиром.'],
+['두 번 틀리면 숫자가 가려진 설계도가, 네 번 틀리면 전체 설계도가 열려.','错两次会打开遮住数字的设计图，错四次会打开完整的设计图。','После двух ошибок откроется схема без чисел, после четырёх — полная схема.'],
+['<b>설계도</b> — 블록 순서는 이대로야. <b>?</b> 칸은 네가 채워.','<b>设计图</b>——积木顺序就是这样。<b>?</b> 的格子由你来填。','<b>Схема</b> — порядок блоков такой. Поля со знаком <b>?</b> заполни сам.'],
+['<b>전체 설계도</b> — 그대로 만들고, 왜 그런지 한 블록씩 실행해 봐.','<b>完整设计图</b>——照着做，然后单步运行，想想为什么。','<b>Полная схема</b> — собери так же и запусти по шагам, чтобы понять почему.'],
+['다시 해 볼게','我再试试','Попробую ещё раз'],['먼저 생각하기','先想一想','Сначала подумай'],['직접 만들어 보기','自己动手做','Собрать самому'],['맞았어! ','答对了！','Верно! '],['아쉬워. ','可惜。','Не совсем. '],
+['이렇게 해','这样做','Как играть'],
+['① 가운데 <b>블록 꾸러미</b>에서 블록을 끌어 오른쪽 <b>블록 조립소</b>에 놓아. 한 번 눌러도 맨 아래에 붙어.','① 从中间的<b>积木盒</b>把积木拖到右边的<b>积木组装区</b>。点一下也会接到最下面。','① Перетаскивай блоки из <b>набора блоков</b> в центре в <b>сборку</b> справа. Можно просто нажать — блок встанет в конец.'],
+['② <b>흰 칸</b>을 누르면 숫자나 글자를 바꿀 수 있어.','② 点击<b>白色格子</b>可以修改数字或文字。','② Нажми на <b>белое поле</b>, чтобы изменить число или текст.'],
+['③ 반복·만일 블록 <b>안에</b> 넣으려면 「여기에 블록 넣기」 칸 위에 놓아.','③ 想放进重复或如果积木<b>里面</b>，就放到「把积木放这里」的格子上。','③ Чтобы положить блок <b>внутрь</b> повторения или «если», отпусти его над полем «Положи блок сюда».'],
+['④ 둥근 <b>값 블록</b>(대답, 변의 수, ÷)은 끌어서 흰 숫자 칸 위에 놓아. 값 블록을 누르면 빠져.','④ 圆形的<b>数值积木</b>（回答、边数、÷）要拖到白色数字格上。点一下数值积木就会取出来。','④ Круглые <b>блоки-значения</b> (ответ, число сторон, ÷) перетаскивай на белое поле с числом. Нажми на такой блок, чтобы убрать его.'],
+['⑤ 블록을 조립소 밖으로 끌어내거나 × 를 누르면 지워져.','⑤ 把积木拖出组装区，或者点 × ，就会删除。','⑤ Вытащи блок из сборки или нажми ×, чтобы удалить его.'],
+['⑥ <b>▶ 실행</b>으로 확인해. <b>⏭ 한 블록씩</b>은 천천히 살펴볼 때 써.','⑥ 用<b>▶ 运行</b>来检查。想慢慢看时用<b>⏭ 单步</b>。','⑥ Проверяй кнопкой <b>▶ Пуск</b>. <b>⏭ По шагам</b> — чтобы рассмотреть всё медленно.'],
+['알겠어','知道了','Понятно'],
+/* 360의 비밀 */
+['방어막 모양','护盾形状','Формы щитов'],['빈칸 채우기','填空','Заполни пропуски'],
+['네모 · 변 4개<br>90°씩 4번 돌기','正方形 · 4条边<br>每次转90°，转4次','Квадрат · 4 стороны<br>4 поворота по 90°'],['세모 · 변 3개<br>?°씩 3번 돌기','三角形 · 3条边<br>每次转?°，转3次','Треугольник · 3 стороны<br>3 поворота по ?°'],['육각형 · 변 6개<br>?°씩 6번 돌기','六边形 · 6条边<br>每次转?°，转6次','Шестиугольник · 6 сторон<br>6 поворотов по ?°'],
+['노란 점에서 출발해서, 다 그리면 처음 방향으로 돌아와.','从黄点出发，画完后回到开始的方向。','Старт в жёлтой точке; когда фигура готова, корабль снова смотрит как в начале.'],
+['네모','正方形','квадрат'],['세모','三角形','треугольник'],['육각형','六边形','шестиугольник'],
+['4 × 90 과 같아. 이게 한 바퀴야.','和 4 × 90 一样。这就是一整圈。','То же, что 4 × 90. Это полный оборот.'],['세모도 한 바퀴를 돌아. 3번에 나눠서.','三角形也转一整圈，分成3次。','Треугольник тоже делает полный оборот — за 3 поворота.'],
+['규칙: 한 번에 도는 각도','规律：每次转的角度','Правило: угол одного поворота'],['변의 길이','边长','длина стороны'],['변의 수','边数','число сторон'],['확인','检查','Проверить'],
+['도움: 3 × ? = 360 이면 ? = 360 ÷ 3. 나눗셈으로 구해 봐.','提示：3 × ? = 360，那么 ? = 360 ÷ 3。用除法算一算。','Подсказка: если 3 × ? = 360, то ? = 360 ÷ 3. Найди делением.'],['빨간 칸을 다시 계산해 봐.','重新算一算红色的格子。','Пересчитай красные поля.'],
+['규칙을 찾았어!','找到规律了！','Правило найдено!'],['한 번에 도는 각도 = 360 ÷ 변의 수','每次转的角度 = 360 ÷ 边数','Угол одного поворота = 360 ÷ число сторон'],
+['세모는 360 ÷ 3 = 120°. 다음 미션에서 바로 써 보자.','三角形是 360 ÷ 3 = 120°。下一个任务马上用一用。','Для треугольника 360 ÷ 3 = 120°. Используем это в следующей миссии.'],
+/* 수료식 · 설계도 */
+['수료식','结业典礼','Вручение сертификата'],['아직 남은 미션이 있어','还有任务没完成','Остались непройденные миссии'],['21개 미션을 모두 끝내면 수료증을 받을 수 있어.','完成全部21个任务就能拿到结业证书。','Сертификат можно получить, когда пройдены все миссии (21).'],
+['모든 미션 완료! 수료증에 넣을 내 캐릭터를 골라.','全部任务完成！选一个放在结业证书上的角色。','Все миссии пройдены! Выбери персонажа для сертификата.'],['나중에 다시 바꿀 수 있어.','以后还可以再换。','Потом можно поменять.'],
+['축하해! 수료증이 나왔어.','恭喜！结业证书出来了。','Поздравляем! Сертификат готов.'],['인쇄하기','打印','Печать'],['캐릭터 바꾸기','换角色','Сменить персонажа'],['다음: 엔트리로 만들기','下一步：用Entry制作','Дальше: сделать в Entry'],
+['수 료 증','结业证书','Сертификат'],['{0}번 대원','{0}号队员','участник №{0}'],['이름','姓名','Имя'],
+['위 대원은 우주 탐험대의 미션 {0}개를 모두 마치고,<br>적의 공격을 피해 기지를 지키는 「방어막 기계」를 스스로 완성하였기에<br>이 증서를 드립니다.','该队员完成了宇宙探险队的全部{0}个任务，<br>躲开敌人的攻击，独立完成了保护基地的「护盾机器」，特发此证。','Этот участник прошёл все миссии «Космических исследователей» ({0}),<br>уклонился от вражеских атак и сам собрал «машину щитов» для защиты базы.<br>За это вручается данный сертификат.'],
+['순차','顺序','порядок'],['변수','变量','переменная'],['계산','计算','вычисление'],
+['배지 {0}개 · 황금 배지 {1}개','徽章{0}个 · 金徽章{1}个','Значков: {0} · золотых: {1}'],['우주 탐험대 본부','宇宙探险队总部','Штаб «Космических исследователей»'],
+['마지막 단계','最后一步','Последний шаг'],['엔트리 설계도 — 이제 엔트리에서 혼자 만들어','Entry设计图——现在自己在Entry里制作','Схема для Entry — теперь сделай сам в Entry'],
+['엔트리를 열고, 아래 순서대로 「도형 그리기 기계」를 만들어 봐.','打开Entry，按下面的顺序制作「画图形机器」。','Открой Entry и собери «машину для рисования фигур» в таком порядке.'],['블록 이름이 조금 달라. 오른쪽 표에서 찾아.','积木名称有点不一样。在右边的表里找。','Названия блоков немного другие. Найди их в таблице справа.'],
+['완성 코드 (엔트리 블록 이름)','完成的代码（Entry积木名称）','Готовый код (названия блоков Entry)'],['여기 블록 → 엔트리에서 찾는 곳','这里的积木 → 在Entry里的位置','Блоки здесь → где искать в Entry'],
+['다 만들었으면 확인해 봐','做完后检查一下','Когда закончишь, проверь'],['□ 3을 넣으면 세모가 그려진다.','□ 输入3，画出三角形。','□ Если ввести 3, рисуется треугольник.'],['□ 6을 넣으면 육각형이 그려진다.','□ 输入6，画出六边形。','□ Если ввести 6, рисуется шестиугольник.'],
+['□ 2를 넣으면 「그릴 수 없어요」라고 말한다.','□ 输入2，会说「그릴 수 없어요（画不出来）」。','□ Если ввести 2, корабль говорит «그릴 수 없어요 (нельзя нарисовать)».'],
+['★ 도전: 다 그린 뒤에 「방어막 완성!」이라고 말하게 해 봐.','★ 挑战：画完后让它说一句话。','★ Задание со звёздочкой: пусть после рисования корабль скажет фразу.'],
+['문 · 에너지 > 10','门 · 能量 > 10','ворота · энергия > 10'],['기지','基地','база']
+];
+const TR={};TRL.forEach(e=>TR[e[0]]=[e[1],e[2]]);
+const MISS=new Set();
+const fill=(s,a)=>String(s).replace(/\{(\d)\}/g,(_,i)=>a[i]);
+const two=()=>LANG==='zh'||LANG==='ru';
+function trOf(k){if(!two())return null;const e=TR[k];if(!e){if(/[가-힣]/.test(k))MISS.add(k);return null}return e[LANG==='zh'?0:1]}
+/* t: 아래 줄에 번역 / ti: 옆에 작게 / tp: 글자만(옆에 · 으로) / tj: 여러 조각을 한 문장으로 */
+function t(k,...a){const r=trOf(k),b=fill(k,a);return r?b+`<span class="tr" lang="${LANG}">${fill(r,a)}</span>`:b}
+function ti(k,...a){const r=trOf(k),b=fill(k,a);return r?b+`<span class="tri" lang="${LANG}">${fill(r,a)}</span>`:b}
+function tp(k,...a){const r=trOf(k),b=fill(k,a);return r?b+' · '+fill(r,a):b}
+function tj(items){let ko='',tr='',has=false;for(const it of items){if(!it)continue;if(typeof it==='string'){ko+=it;tr+=it;continue}const [k,...a]=it,r=trOf(k);ko+=fill(k,a);tr+=fill(r||k,a);if(r)has=true}return has?ko+`<span class="tr" lang="${LANG}">${tr}</span>`:ko}
+
+/* ───────── 실행기 ───────── */
+function newState(z){const s={x:0,y:0,h:z.h||0,segs:[],trail:[],said:[],ans:null,vr:null,steps:0,err:null,turn:null,cond:null,boom:0};
+ if(z.g){s.cx=z.g.start[0];s.cy=z.g.start[1];[s.x,s.y]=z.g.pos(s.cx,s.cy);s.trail.push([s.x,s.y])}else{s.x=z.start[0];s.y=z.start[1]}return s}
+const fmt=v=>+(Math.round(v*10)/10);
+function val(v,st){
+ if(typeof v==='number')return v;
+ if(v.v==='ans'){if(st.ans==null){st.err=['아직 대답이 없어. 「묻고 대답 기다리기」가 먼저 와야 해.'];return 0}return st.ans}
+ if(v.v==='var'){if(st.vr==null){st.err=['「변의 수」 상자가 비어 있어. 「정하기」 블록이 먼저 와야 해.'];return 0}return st.vr}
+ const a=val(v.a,st),b=val(v.b,st);
+ if(v.op==='÷'){if(b===0){st.err=['0으로는 나눌 수 없어.'];return 0}return a/b}
+ return v.op==='×'?a*b:v.op==='+'?a+b:a-b;
+}
+function* exec(list,st,z){
+ for(const b of list){
+  if(st.err)return;
+  if(++st.steps>700){st.err=['블록이 너무 많이 실행됐어. 반복 횟수를 확인해 봐.'];return}
+  const a=b.args;
+  if(b.t==='step'){st.turn=null;const g=z.g,h=((st.h%360)+360)%360;
+   if(!g){st.err=['여기는 칸이 없는 우주야. 「이동 방향으로 ~만큼 움직이기」를 써.'];return}
+   if(h%45){st.err=['이 우주에서는 45°, 90°, 135°, 180°처럼 돌아야 칸에 맞아. 지금은 {0}°만큼 돌아가 있어.',fmt(h)];return}
+   const r=h*Math.PI/180,nx=st.cx+Math.round(Math.cos(r)),ny=st.cy+Math.round(Math.sin(r));
+   if(nx<0||ny<0||nx>=g.cols||ny>=g.rows){st.err=['우주 지도 밖으로 나갔어. 방향과 칸 수를 확인해 봐.'];return}
+   st.cx=nx;st.cy=ny;[st.x,st.y]=g.pos(nx,ny);st.trail.push([st.x,st.y]);
+   if(g.bad.has(nx+','+ny)){st.boom=1;st.err=[g.enemy.has(nx+','+ny)?'적 우주선과 부딪혔어! 다른 방향으로 가야 해.':'적의 레이저에 맞았어! 이 칸에 오기 전에 방향을 바꿔야 했을까, 칸 수가 달랐을까?'];yield {id:b.id};return}
+   yield {id:b.id}}
+  else if(b.t==='move'){st.turn=null;const n=val(a.n,st);if(st.err)return;const r=st.h*Math.PI/180,x=st.x+Math.cos(r)*n,y=st.y+Math.sin(r)*n;st.segs.push([st.x,st.y,x,y]);st.x=x;st.y=y;yield {id:b.id}}
+  else if(b.t==='right'||b.t==='left'){const d=val(a.a,st);if(st.err)return;const s=b.t==='right'?d:-d;st.turn={from:st.h,d:s};st.h+=s;yield {id:b.id,note:[b.t==='right'?'오른쪽으로 {0}° 돌았어.':'왼쪽으로 {0}° 돌았어.',fmt(d)]}}
+  else if(b.t==='repeat'){const n=Math.max(0,Math.min(60,Math.floor(val(a.n,st))));if(st.err)return;for(let i=0;i<n&&!st.err;i++){yield {id:b.id,flow:1,note:['{0}번 중 {1}번째 반복',n,i+1]};yield* exec(b.body,st,z)}}
+  else if(b.t==='if'||b.t==='ifelse'){const c=a.cond,x=val(c.a,st),y=val(c.b,st);if(st.err)return;const ok=c.op==='>'?x>y:c.op==='<'?x<y:Math.abs(x-y)<1e-9,ex=fmt(x)+' '+c.op+' '+fmt(y);
+   st.cond=[ex,ok];
+   yield {id:b.id,flow:1,slow:1,note:[ok?'「{0}」은 <b>참</b>(맞다) → 위 칸을 실행해.':b.t==='if'?'「{0}」은 <b>거짓</b>(아니다) → 건너뛰어.':'「{0}」은 <b>거짓</b>(아니다) → 「아니면」 아래 칸을 실행해.',ex]};
+   if(ok)yield* exec(b.body,st,z);else if(b.els)yield* exec(b.els,st,z)}
+  else if(b.t==='ask'){st.turn=null;st.ans=yield {id:b.id,ask:a.text}}
+  else if(b.t==='setvar'){st.turn=null;const v=val(a.v,st);if(st.err)return;st.vr=v;yield {id:b.id,note:['「변의 수」 상자에 {0}을(를) 담았어.',fmt(v)]}}
+  else if(b.t==='say'){st.turn=null;st.said.push(a.text);yield {id:b.id}}
+ }
+}
+function simulate(prog,z,inputs=[]){const st=newState(z),g=exec(prog,st,z);let r=g.next(),k=0;while(!r.done){if(r.value.ask!==undefined){const v=inputs.length?inputs[Math.min(k++,inputs.length-1)]:null;r=g.next(v)}else r=g.next()}st.turn=null;return st}
+function pts(segs){const p=[];for(const [x1,y1,x2,y2] of segs){const len=Math.hypot(x2-x1,y2-y1);if(len<.5)continue;const n=Math.max(1,Math.ceil(len/4));for(let i=0;i<=n;i++)p.push([x1+(x2-x1)*i/n,y1+(y2-y1)*i/n])}return p}
+const near=(P,Q)=>P.every(p=>Q.some(q=>(p[0]-q[0])**2+(p[1]-q[1])**2<=30));
+function same(a,b){if(a.err)return false;const A=pts(a.segs),C=pts(b.segs);return near(A,C)&&near(C,A)&&(a.said.length>0)===(b.said.length>0)}
+const atGoal=(s,z)=>!s.err&&s.cx===z.g.goal[0]&&s.cy===z.g.goal[1];
+const refCache={};
+function refState(i,input){const k=i+':'+input;return refCache[k]||(refCache[k]=simulate(M[i].sol(),M[i],input==null?[]:[input]))}
+const walk=(list,f)=>list.forEach(b=>{f(b);if(b.body)walk(b.body,f);if(b.els)walk(b.els,f)});
+const blockVals=b=>{const a=b.args;return b.t==='if'||b.t==='ifelse'?[a.cond.a,a.cond.b]:[a.n,a.a,a.v].filter(v=>v!==undefined)};
+const uses=(v,k)=>typeof v==='object'&&(v.v===k||(v.v==='calc'&&(uses(v.a,k)||uses(v.b,k))));
+const some=(p,f)=>{let r=false;walk(p,b=>{if(f(b))r=true});return r};
+const HAS={
+ ask:p=>some(p,b=>b.t==='ask'),setvar:p=>some(p,b=>b.t==='setvar'),
+ repeatvar:p=>some(p,b=>b.t==='repeat'&&uses(b.args.n,'var')),
+ calcvar:p=>some(p,b=>blockVals(b).some(v=>typeof v==='object'&&v.v==='calc'&&(uses(v.a,'var')||uses(v.b,'var'))))
+};
+const REQ={
+ ask:'우주선이 먼저 물어봐야 해. 「묻고 대답 기다리기」 블록을 넣어 봐.',
+ setvar:'그림은 맞아! 그런데 이번에는 「변의 수 를 ~로 정하기」 블록을 꼭 써야 해.',
+ repeatvar:'그림은 맞아! 그런데 반복 횟수 칸에 숫자 대신 「변의 수」 블록을 넣어야 해.',
+ calcvar:'그림은 맞아! 그런데 각도를 직접 쓰지 말고 「360 ÷ 변의 수」로 계산하게 해야 해. 변의 수가 바뀌어도 되게.'
+};
+const count=l=>l.reduce((s,b)=>s+1+count(b.body||[])+count(b.els||[]),0);
+
+/* ───────── 저장 ───────── */
+const KEY='space-explorer-v1';
+let data={};try{data=JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch(e){}
+if(!data.p)data={p:{},open:false};
+let pilot=data.last||1;LANG=data.lang||'';document.body.dataset.lang=LANG;
+function prof(){return data.p[pilot]||(data.p[pilot]={wins:{},codes:{},hints:{},pred:{},fr:{}})}
+function persist(){data.last=pilot;data.lang=LANG;let ok=true;try{localStorage.setItem(KEY,JSON.stringify(data))}catch(e){ok=false}
+ $('pilotTag').textContent=ok?((data.p[pilot]||{}).char||'')+' '+pilot+'번 대원':'저장 불가 · 창을 닫지 마';
+ $('langBtn').textContent='🌐 '+({ko:'한국어',zh:'한국어 + 中文',ru:'한국어 + Русский'}[LANG]||'언어');$('helpBtn').innerHTML=ti('도움말')}
+
+/* ───────── 상태 ───────── */
+let errId=null,mi=0,program=[],history=[],running=false,token=0,st=null,target=null,hl=null,fails=0,speed=300,stepMode=false,stepGo=null,askGo=null;
+const m=()=>M[mi];
+function modal(h){$('modal').innerHTML=h;if(!$('modal').open)$('modal').showModal()}
+function closeModal(){$('modal').close()}
+function reid(list){walk(list,b=>b.id=++uid);return list}
+function maxId(list){let x=0;walk(list,b=>x=Math.max(x,b.id));return x}
+
+/* ───────── 블록 HTML ───────── */
+function vHTML(v,bid,path,o){
+ const at=`data-bid="${bid}" data-path="${path}"`;
+ if(typeof v==='number')return `<span class="slot num" ${at}>${o.mask?'?':fmt(v)}</span>`;
+ if(v.v==='ans')return `<span class="slot has" ${at}><span class="rep r-ans">대답</span></span>`;
+ if(v.v==='var')return `<span class="slot has" ${at}><span class="rep r-var">${VARNAME}</span></span>`;
+ const op=o.ro?`<span class="op">${v.op}</span>`:`<select data-bid="${bid}" data-path="${path}.op">${['÷','×','+','-'].map(x=>`<option ${x===v.op?'selected':''}>${x}</option>`).join('')}</select>`;
+ return `<span class="slot has" ${at}><span class="rep r-calc">${vHTML(v.a,bid,path+'.a',o)}${op}${vHTML(v.b,bid,path+'.b',o)}</span></span>`;
+}
+function bHTML(b,o){
+ const d=DEF[b.t];
+ const head=d.parts.map(p=>{
+  if(typeof p==='string')return `<span>${esc(p)}</span>`;
+  if(p[1]==='t')return `<span class="slot txt" data-bid="${b.id}" data-path="${p[0]}">${esc(b.args[p[0]])}</span>`;
+  if(p[1]==='c'){const c=b.args.cond,op=o.ro?`<span class="op">${o.mask?'?':c.op}</span>`:`<select data-bid="${b.id}" data-path="cond.op">${['>','<','='].map(x=>`<option ${x===c.op?'selected':''}>${x}</option>`).join('')}</select>`;return `<span class="cond">${vHTML(c.a,b.id,'cond.a',o)}${op}${vHTML(c.b,b.id,'cond.b',o)}</span>`}
+  return vHTML(b.args[p[0]],b.id,p[0],o)}).join('');
+ let h=`<div class="blk ${d.cat}${d.c?' cblk':''}" data-id="${b.id}"><div class="bh">${head}${o.ro?'':`<button class="del" data-del="${b.id}" aria-label="블록 지우기">×</button>`}</div>`;
+ if(d.c){h+=`<div class="list" data-list="${b.id}:body">${b.body.map(x=>bHTML(x,o)).join('')}</div>`;
+  if(d.c===2)h+=`<div class="bm">${ti('아니면')}</div><div class="list" data-list="${b.id}:els">${b.els.map(x=>bHTML(x,o)).join('')}</div>`;
+  h+='<div class="bf"></div>'}
+ return h+'</div>';
+}
+const roHTML=(list,mask)=>`<div class="code-ro"><div class="hat">▶ 시작하기 버튼을 클릭했을 때</div>${list.map(b=>bHTML(b,{ro:1,mask})).join('')}</div>`;
+function find(id,list=program){for(let i=0;i<list.length;i++){const b=list[i];if(b.id===id)return {b,list,i};for(const k of ['body','els'])if(b[k]){const r=find(id,b[k]);if(r)return r}}return null}
+function getList(key){if(key==='root')return program;const [id,k]=key.split(':');const f=find(Number(id));return f?f.b[k]:null}
+function ref(obj,path){const k=path.split('.');let o=obj;for(let i=0;i<k.length-1;i++)o=o[k[i]];return [o,k[k.length-1]]}
+const closeBtn=()=>`<div class="mact"><button onclick="closeModal()">${ti('닫기')}</button></div>`;
+
+/* ───────── 배지 ───────── */
+const ZC=['#5ee6ff','#9a86ff','#ff8ad8','#5fe3a1','#5ee6ff'];
+function badgeSVG(i,gold,size=96,locked=false){
+ const z=M[i],c=locked?'#33406b':gold?'#ffd66b':ZC[z.z],c2=locked?'#1c2545':gold?'#ff8a3c':'#26347f',id='bg'+(locked?'l':gold?'g':z.z);
+ return `<svg width="${size}" height="${size}" viewBox="0 0 100 100" aria-hidden="true"><defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c}"/><stop offset="1" stop-color="${c2}"/></linearGradient></defs><polygon points="50,4 90,27 90,73 50,96 10,73 10,27" fill="url(#${id})" stroke="${locked?'#33406b':'#fff'}" stroke-width="3"/><polygon points="50,15 80,32 80,68 50,85 20,68 20,32" fill="rgba(5,10,24,.6)"/><text x="50" y="${gold&&!locked?54:60}" text-anchor="middle" font-size="30" font-weight="800" fill="${locked?'#56638f':'#fff'}" font-family="sans-serif">${i+1}</text>${gold&&!locked?'<text x="50" y="77" text-anchor="middle" font-size="19" fill="#ffd66b">★</text>':''}</svg>`}
+const isGold=(i,p)=>!!p.wins[i]&&!M[i].quiz&&p.wins[i].best<=M[i].short;
+const stripHTML=(p,size=34)=>'<div class="strip">'+M.map((z,i)=>z.free?'':badgeSVG(i,isGold(i,p),size,!p.wins[i])).join('')+'</div>';
+const allWon=p=>M.every((z,i)=>z.free||p.wins[i]);
+const wonCount=p=>Object.keys(p.wins).filter(k=>k<=LAST).length;
+function badgeScene(before){
+ const p=prof(),z=m(),gold=isGold(mi,p),wasGold=before&&!z.quiz&&before.best<=z.short;p.zm=p.zm||{};
+ const line=!before?(gold?'황금 배지 획득!':'배지 획득!'):gold&&!wasGold?'황금 배지로 올라갔어!':'이미 받은 배지야. 다시 성공!';
+ let h=`<div class="badgebox"><div class="sparks">${!before||gold&&!wasGold?[0,45,90,135,180,225,270,315].map(a=>`<i style="--a:${a}deg"></i>`).join(''):''}<span class="pop">${badgeSVG(mi,gold,104)}</span></div><div class="bt">${t(line)}<small>${String(mi+1).padStart(2,'0')}번 「${z.title}」${gold?' · ★':''}</small><small>${tp('모은 배지 {0} / {1}',wonCount(p),TOTAL)}</small></div></div>`;
+ const zoneDone=M.every((x,i)=>x.z!==z.z||x.free||p.wins[i]);
+ if(zoneDone&&!p.zm[z.z]){p.zm[z.z]=1;persist();h+=`<div class="medal"><span style="font-size:30px">🎖</span><span>${t('{0}구역 「{1}」 훈장 획득! 이 구역의 미션을 모두 끝냈어.',z.z+1,ZONES[z.z][0])}</span></div>`}
+ return h;
+}
+
+/* ───────── 언어 고르기 · 첫 화면 ───────── */
+function langScreen(){
+ token++;running=false;if($('modal').open)closeModal();
+ $('app').innerHTML=`<section class="langpick"><div class="eyebrow">LANGUAGE</div><h2>언어를 골라 줘 · 选择语言 · Выбери язык</h2>
+ <div class="langs"><button class="${LANG==='ko'?'sel':''}" onclick="setLang('ko')"><b>한국어</b><span>한국어만 보여요</span></button>
+ <button class="${LANG==='zh'?'sel':''}" onclick="setLang('zh')"><b>한국어 + 中文</b><span>韩语下面有中文</span></button>
+ <button class="${LANG==='ru'?'sel':''}" onclick="setLang('ru')"><b>한국어 + Русский</b><span>под корейским — русский</span></button></div>
+ <p class="muted small" style="text-align:center">중국어·러시아어 번역에는 틀린 곳이 있을 수 있어요.<br>中文翻译可能有错误。 · В русском переводе могут быть ошибки.</p></section>`;
+}
+function setLang(l){LANG=l;document.body.dataset.lang=l;persist();home()}
+const isOpen=(i,p)=>data.open||i===0||p.wins[i-1]||p.wins[i]||(M[i].free&&p.wins[LAST]);
+function home(){
+ token++;running=false;if(!LANG){langScreen();return}const p=prof();persist();const won=wonCount(p);
+ const card=(z,i)=>{const open=isOpen(i,p);
+  return `<button class="mcard ${p.wins[i]?'done':''} ${open?'':'locked'}" onclick="choose(${i})"><span class="n">${z.free?'BONUS':'MISSION '+String(i+1).padStart(2,'0')}</span><strong>${z.bug?'🔧 ':''}${t(z.title)}</strong><small>${t(p.wins[i]?(z.quiz||z.free?'✓ 완료':p.wins[i].best<=z.short?'✓ 성공 · 짧은 코드 ★':'✓ 성공'):open?'출동 가능':'앞 미션을 먼저')}</small></button>`};
+ const R=(n,a,b)=>`<div><b>${n}</b><span class="rt">${ti(a)}${b?' <span class="rd">— '+tp(b)+'</span>':''}</span></div>`;
+ $('app').innerHTML=`<section class="hero"><div>
+  <div class="eyebrow">CODE · DODGE · DEFEND</div>
+  <h2>${t('레이저를 피하고,<br><span>방어막 기계</span>를 완성하라.')}</h2>
+  <p>${t('적들이 기지를 공격하고 있어. 우주선에게 블록으로 명령해서<br>공격을 피하고, 기지를 지킬 방어막을 만들자.')}</p>
+  <div class="startbox"><label for="pilot"><b>${ti('내 번호')}</b></label><input id="pilot" type="number" min="1" max="40" value="${pilot}"><button class="primary" onclick="enter()">${ti('이 번호로 출동')}</button><span class="small muted">${tp('{0}번 · {1} / {2} 성공',pilot,won,TOTAL)}</span></div></div>
+  <div class="panel"><h3>${ti('탐험 항로')}</h3><div class="route">${R(1,'움직임 마스터','가기 · 돌기 · 반복')}${R(2,'방어막 그리기','각도 숫자')}${R(3,'선택','참과 거짓')}${R(4,'변수 · 계산','방어막 기계')}${R('★','엔트리로 혼자 만들기')}</div>
+  <h3 style="margin-top:12px">${ti('내 배지 {0} / {1}',won,TOTAL)}</h3>${stripHTML(p,30)}
+  <div class="mact"><button ${allWon(p)?'':'disabled'} onclick="ceremony()">${p.char||'🎓'} ${ti('수료증')}</button><button ${p.wins[LAST]||data.open?'':'disabled'} onclick="blueprint()">${ti('엔트리 설계도 보기')}</button></div></div></section>
+  ${ZONES.map((z,zi)=>`<div class="zone"><h3><b>${tp('{0}구역',zi+1)}</b><span>${ti(z[0])}</span><span class="muted">${tp(z[1])}</span></h3><div class="grid">${M.map((x,i)=>x.z===zi?card(x,i):'').join('')}</div></div>`).join('')}
+  <div class="zone"><h3><b>${tp('보너스')}</b><span class="muted">${tp('마지막 미션을 끝내면 열려')}</span></h3><div class="grid">${card(M[FREE],FREE)}</div></div>`;
+}
+function enter(){const n=Number($('pilot').value);if(!Number.isInteger(n)||n<1||n>40){modal(`<h2>${t('번호를 확인해 줘')}</h2><p>${t('1부터 40 사이의 번호를 넣어 줘.')}</p>${closeBtn()}`);return}pilot=n;home()}
+function choose(i){
+ const p=prof(),z=M[i];
+ if(!isOpen(i,p)){modal(`<h2>${t('앞 미션부터 하자')}</h2><p>${t('앞에서 배운 블록이 다음 미션에 쓰여.')}</p>${closeBtn()}`);return}
+ mi=i;fails=0;history=[];target=null;hl=null;errId=null;
+ if(z.quiz){renderQuiz();return}
+ program=clone(p.codes[i]||(z.pre?reid(z.pre()):[]));uid=Math.max(uid,maxId(program));
+ st=newState(z);if(!z.g&&!z.input&&!z.free)target=refState(i,null);
+ renderGame();
+ if(z.predict&&!p.pred[i])showPredict();
+}
+
+/* ───────── 미션 화면 ───────── */
+const REPDEF={ans:['대답','r-ans'],var:[VARNAME,'r-var'],calc:['( ) ÷ ( )','r-calc']};
+const ptr=k=>two()?`<div class="ptr" lang="${LANG}">${BTR[k][LANG==='zh'?0:1]}</div>`:'';
+const headHTML=(z)=>`<div class="ghead"><div><div class="eyebrow">${z.free?'BONUS':(z.z+1)+'구역 '+ZONES[z.z][0]+' · MISSION '+String(mi+1).padStart(2,'0')}</div><h2>${z.bug?'🔧 ':''}${t(z.title)}</h2></div><span class="sp"></span><button onclick="home()">${ti('미션 지도')}</button></div>`;
+function renderGame(){
+ const z=m(),hasIf=z.pal.includes('if')||z.pal.includes('ifelse');
+ const cats=[['움직임',['step','move','right','left']],['흐름',['repeat','if','ifelse']],['자료',['ask','setvar']],['생김새',['say']]];
+ const pal=cats.map(([name,ts])=>{const on=ts.filter(k=>z.pal.includes(k));return on.length?`<h4>${tp(name)}</h4>`+on.map(k=>`<div data-new="${k}">${bHTML({id:0,t:k,args:DEF[k].args,body:[],els:[]},{ro:1})}${ptr(k)}</div>`).join(''):''}).join('')
+  +(z.reps.length?`<h4>${t('값 블록 — 끌어서 흰 숫자 칸 위에')}</h4>`+z.reps.map(r=>`<span class="rep ${REPDEF[r][1]}" data-rep="${r}">${REPDEF[r][0]}</span>`).join('')+(two()?`<div class="ptr" lang="${LANG}">${z.reps.map(r=>REPDEF[r][0].replace('( ) ÷ ( )','÷')+' = '+BTR[r][LANG==='zh'?0:1]).join(' · ')}</div>`:''):'');
+ $('app').innerHTML=`${headHTML(z)}
+ <div class="goal"><div>${t(z.goal)}<small>${t(z.tip)}</small></div>${z.ex?`<div class="examples">${z.ex.map((v,k)=>`<div class="ex"><canvas id="ex${k}" width="160" height="160"></canvas><span id="exc${k}"></span></div>`).join('')}</div>`:''}</div>
+ <div class="layout">
+  <section class="panel stage"><h3>${ti('실행 화면')}</h3><canvas id="cv" width="480" height="480" aria-label="실행 화면"></canvas>
+   <div class="runbar"><button id="runBtn" class="primary" onclick="run(false)">${t('▶ 실행')}</button><button id="stepBtn" onclick="run(true)">${t('⏭ 한 블록씩')}</button><button id="stopBtn" onclick="stop()" disabled>${t('■ 멈춤')}</button></div>
+   <div class="vars">${z.reps.includes('ans')?`<span class="var">${ti('대답')}<b id="vAns">–</b></span>`:''}${z.reps.includes('var')?`<span class="var">${ti('변의 수 상자')}<b id="vVar">–</b></span>`:''}${hasIf?`<span class="var cond">${ti('조건')}<b id="vCond">–</b></span>`:''}</div>
+   <div id="ask"></div><div id="status" class="status">${t(z.free?'자유롭게 실행해 봐.':z.g?'레이저(빨간 칸)와 적을 피해서 기지에 도착하면 성공!':z.input?'먼저 실행해서 대답을 넣어 봐. 그러면 점선으로 목표가 나타나.':'점선이 목표야. 똑같이 그리면 성공!')}</div>
+   <div class="tools"><button class="soft" id="speedBtn" onclick="toggleSpeed()"></button>${z.free?'':`<button class="soft" onclick="hint()">${ti('생각 도우미')}</button>`}</div>
+  </section>
+  <section class="panel pal"><h3>${ti('블록 꾸러미')}</h3>${pal}</section>
+  <section class="panel"><h3>${ti('블록 조립소')} <span id="count" class="tag" style="float:right"></span></h3><div id="ws"></div>
+   <div class="tools"><button class="soft" id="undoBtn" onclick="undo()">${ti('되돌리기')}</button><button class="soft" onclick="resetCode()">${ti(z.pre?'처음 코드로':'모두 비우기')}</button>${z.short?`<span class="small muted">${tp('★ 짧은 코드: {0}블록 이내',z.short)}</span>`:''}</div>
+  </section></div>`;
+ speedLabel();renderWS();draw();drawExamples();
+}
+function renderWS(){
+ const w=$('ws');if(!w)return;
+ w.innerHTML=`<div class="hat">▶ 시작하기 버튼을 클릭했을 때</div><div class="list root" data-list="root">${program.map(b=>bHTML(b,{})).join('')||`<div class="empty">${t('왼쪽 블록을 끌어서 여기에 놓아.<br>블록을 한 번 눌러도 맨 아래에 붙어.')}</div>`}</div>`;
+ $('count').textContent=count(program)+' / '+m().max+' 블록';$('undoBtn').disabled=running||!history.length;
+ if(hl)w.querySelector(`.blk[data-id="${hl}"]`)?.classList.add('on');
+ if(errId)w.querySelector(`.blk[data-id="${errId}"]`)?.classList.add('bad');
+}
+function status(h,type=''){const s=$('status');if(s){s.innerHTML=h;s.className='status '+type}}
+function remember(){history.push(clone(program));if(history.length>50)history.shift()}
+function changed(){errId=null;prof().codes[mi]=clone(program);persist();renderWS()}
+function undo(){if(running||!history.length)return;program=history.pop();changed()}
+function resetCode(){if(running)return;remember();program=m().pre?reid(m().pre()):[];changed();resetStage();status(t(m().pre?'처음 코드로 돌아왔어.':'블록을 비웠어. 되돌리기로 다시 가져올 수 있어.'))}
+function resetStage(){st=newState(m());if(m().input)target=null;hl=null;draw();showVars()}
+function speedLabel(){if($('speedBtn'))$('speedBtn').innerHTML=ti('속도')+' '+(speed===300?'1×':'3×')}
+function toggleSpeed(){speed=speed===300?90:300;speedLabel()}
+function showVars(){const f=v=>v==null?'–':fmt(v);if($('vAns'))$('vAns').textContent=f(st.ans);if($('vVar'))$('vVar').textContent=f(st.vr);if($('vCond'))$('vCond').textContent=st.cond?st.cond[0]+' → '+tp(st.cond[1]?'참(맞다)':'거짓(아니다)'):'–'}
+
+/* ───────── 그림 ───────── */
+const STARS=(()=>{let s=7;const r=()=>(s=(s*16807)%2147483647)/2147483647;return Array.from({length:70},()=>[r()*480,r()*480,r()*1.4+.3,r()*.6+.25])})();
+function space(c,W){c.fillStyle='#050a18';c.fillRect(0,0,W,W);for(const [x,y,r,a] of STARS){c.fillStyle='rgba(220,232,255,'+a+')';c.beginPath();c.arc(x*W/480,y*W/480,r,0,7);c.fill()}}
+function ship(c,x,y,h,k=1){c.save();c.translate(x,y);c.rotate(h*Math.PI/180);c.scale(k,k);
+ c.fillStyle='#ff9a3c';c.beginPath();c.moveTo(-10,-5);c.lineTo(-19,0);c.lineTo(-10,5);c.closePath();c.fill();
+ c.shadowColor='#5ee6ff';c.shadowBlur=12;c.fillStyle='#eaf0ff';c.beginPath();c.moveTo(18,0);c.lineTo(-11,-11);c.lineTo(-5,0);c.lineTo(-11,11);c.closePath();c.fill();c.shadowBlur=0;
+ c.fillStyle='#ffd66b';c.beginPath();c.arc(7,0,3.2,0,7);c.fill();c.restore()}
+function wedge(c,x,y,w,R){if(!w)return;const a0=w.from*Math.PI/180,a1=(w.from+w.d)*Math.PI/180;c.fillStyle='rgba(255,214,107,.3)';c.strokeStyle='#ffd66b';c.lineWidth=2;c.beginPath();c.moveTo(x,y);c.arc(x,y,R,a0,a1,w.d<0);c.closePath();c.fill();c.stroke();
+ const am=(w.from+w.d/2)*Math.PI/180;c.fillStyle='#ffd66b';c.font='bold 15px sans-serif';c.textAlign='center';c.textBaseline='middle';c.fillText(fmt(Math.abs(w.d))+'°',x+Math.cos(am)*(R+17),y+Math.sin(am)*(R+17))}
+function base(c,x,y,r){c.strokeStyle='#5ee6ff';c.lineWidth=2.5;c.shadowColor='#5ee6ff';c.shadowBlur=14;c.beginPath();c.arc(x,y,r,0,7);c.stroke();c.shadowBlur=0;c.fillStyle='rgba(94,230,255,.16)';c.fill();c.fillStyle='#bff6ff';c.textAlign='center';c.textBaseline='middle';
+ const sub=two()&&r>=16?TR['기지'][LANG==='zh'?0:1]:'';c.font='bold '+Math.max(11,r*.6)+'px sans-serif';c.fillText('기지',x,y+(sub?-r*.18:1));if(sub){c.font=Math.max(9,r*.4)+'px sans-serif';c.fillText(sub,x,y+r*.42)}}
+function enemy(c,x,y,r){c.save();c.translate(x,y);c.shadowColor='#ff3355';c.shadowBlur=10;c.fillStyle='#ff5d70';c.beginPath();c.ellipse(0,r*.25,r*1.15,r*.42,0,0,7);c.fill();c.beginPath();c.arc(0,-r*.05,r*.6,Math.PI,0);c.fill();c.shadowBlur=0;c.fillStyle='#fff';c.beginPath();c.arc(-r*.25,-r*.2,r*.14,0,7);c.arc(r*.25,-r*.2,r*.14,0,7);c.fill();c.fillStyle='#ffd66b';for(const k of [-.7,0,.7]){c.beginPath();c.arc(k*r,r*.3,r*.1,0,7);c.fill()}c.restore()}
+function boom(c,x,y,r){c.save();c.translate(x,y);c.fillStyle='#ffd66b';c.shadowColor='#ff7a3c';c.shadowBlur=18;c.beginPath();for(let i=0;i<16;i++){const a=i*Math.PI/8,q=i%2?r*.45:r;c.lineTo(Math.cos(a)*q,Math.sin(a)*q)}c.closePath();c.fill();c.fillStyle='#ff5d70';c.beginPath();c.arc(0,0,r*.3,0,7);c.fill();c.restore()}
+function draw(){
+ const cv=$('cv');if(!cv||!st)return;const c=cv.getContext('2d'),z=m();space(c,480);c.lineCap='round';c.lineJoin='round';c.textBaseline='alphabetic';
+ if(z.g){const g=z.g,C=g.cell;
+  for(let y=0;y<g.rows;y++)for(let x=0;x<g.cols;x++){const px=g.ox+x*C,py=g.oy+y*C,k=x+','+y;
+   c.fillStyle='rgba(120,150,230,.07)';c.strokeStyle='rgba(120,150,230,.22)';c.lineWidth=1;c.beginPath();c.roundRect(px+2,py+2,C-4,C-4,6);c.fill();c.stroke();
+   if(g.enemy.has(k)){c.fillStyle='rgba(255,90,110,.2)';c.beginPath();c.roundRect(px+2,py+2,C-4,C-4,6);c.fill();enemy(c,px+C/2,py+C/2,C*.3)}
+   else if(g.bad.has(k)){c.fillStyle='rgba(255,70,95,.3)';c.beginPath();c.roundRect(px+2,py+2,C-4,C-4,6);c.fill();c.strokeStyle='#ff5d70';c.shadowColor='#ff3355';c.shadowBlur=10;c.lineWidth=3;c.beginPath();c.moveTo(px+C*.24,py+C*.24);c.lineTo(px+C*.76,py+C*.76);c.moveTo(px+C*.76,py+C*.24);c.lineTo(px+C*.24,py+C*.76);c.stroke();c.shadowBlur=0}}
+  const [gx,gy]=g.pos(...g.goal);base(c,gx,gy,C*.34);
+  if(st.trail.length>1){c.setLineDash([2,8]);c.strokeStyle='#5ee6ff';c.lineWidth=3;c.beginPath();c.moveTo(...st.trail[0]);st.trail.slice(1).forEach(p=>c.lineTo(...p));c.stroke();c.setLineDash([])}
+  wedge(c,st.x,st.y,st.turn,C*.42);
+  if(st.boom)boom(c,st.x,st.y,C*.42);else ship(c,st.x,st.y,st.h,Math.min(1.25,C/56));
+  return}
+ if(z.gate){c.fillStyle='#8fa2e6';c.shadowColor='#5ee6ff';c.shadowBlur=10;c.fillRect(165,110,10,100);c.fillRect(165,270,10,100);c.shadowBlur=0;c.fillStyle='#bff6ff';c.textAlign='center';c.font='bold 15px sans-serif';c.fillText('문 · 에너지 > 10',170,98);
+  if(two()){c.font='12px sans-serif';c.fillText(TR['문 · 에너지 > 10'][LANG==='zh'?0:1],170,80)}}
+ if(target){c.setLineDash([3,9]);c.strokeStyle='rgba(234,240,255,.55)';c.lineWidth=4;c.beginPath();for(const s of target.segs){c.moveTo(s[0],s[1]);c.lineTo(s[2],s[3])}c.stroke();c.setLineDash([]);
+  if(target.segs.length>2&&!z.gate){let sx=0,sy=0;target.segs.forEach(s=>{sx+=s[0];sy+=s[1]});base(c,sx/target.segs.length,sy/target.segs.length,17)}}
+ c.strokeStyle='#5ee6ff';c.shadowColor='#5ee6ff';c.shadowBlur=12;c.lineWidth=5;c.beginPath();for(const s of st.segs){c.moveTo(s[0],s[1]);c.lineTo(s[2],s[3])}c.stroke();c.shadowBlur=0;
+ wedge(c,st.x,st.y,st.turn,34);ship(c,st.x,st.y,st.h);
+ if(st.said.length){const s=st.said[st.said.length-1];c.font='bold 16px sans-serif';c.textBaseline='alphabetic';const w=c.measureText(s).width+22,x=Math.max(6,Math.min(474-w,st.x-w/2)),y=Math.max(8,st.y-66);c.fillStyle='#fff';c.beginPath();c.roundRect(x,y,w,34,9);c.fill();c.fillStyle='#141a2e';c.textAlign='left';c.fillText(s,x+11,y+22)}
+}
+function mini(cv,s,start){
+ const c=cv.getContext('2d'),W=cv.width;space(c,W);
+ let xs=[start[0]],ys=[start[1]];for(const g of s.segs){xs.push(g[0],g[2]);ys.push(g[1],g[3])}
+ const x0=Math.min(...xs),x1=Math.max(...xs),y0=Math.min(...ys),y1=Math.max(...ys),k=Math.min(1,(W-44)/Math.max(x1-x0,y1-y0,1)),ox=(W-(x1-x0)*k)/2-x0*k,oy=(W-(y1-y0)*k)/2-y0*k;
+ c.lineCap='round';c.strokeStyle='#5ee6ff';c.lineWidth=4;c.beginPath();for(const g of s.segs){c.moveTo(g[0]*k+ox,g[1]*k+oy);c.lineTo(g[2]*k+ox,g[3]*k+oy)}c.stroke();
+ c.fillStyle='#ffd66b';c.beginPath();c.arc(start[0]*k+ox,start[1]*k+oy,5,0,7);c.fill();
+}
+function drawExamples(){const z=m();(z.ex||[]).forEach((v,k)=>{const r=refState(mi,v);mini($('ex'+k),r,z.start);$('exc'+k).innerHTML=t(r.said.length?'대답이 {0} → 말하기':r.segs.length?'대답이 {0}':'대답이 {0} → 가만히',v)})}
+
+/* ───────── 실행 ───────── */
+const pause=ms=>new Promise(r=>setTimeout(r,ms));
+function emptyBody(list){return some(list,b=>DEF[b.t].c&&!b.body.length)}
+function setRun(on){running=on;if(!$('runBtn'))return;$('runBtn').disabled=on;$('stopBtn').disabled=!on;$('stepBtn').innerHTML=t(on&&stepMode?'⏭ 다음 블록':'⏭ 한 블록씩');$('stepBtn').disabled=on&&!stepMode;renderWS()}
+function stop(){token++;stepGo=null;askGo=null;if($('ask'))$('ask').innerHTML='';setRun(false);resetStage();status(t('멈췄어. 우주선은 처음 자리로 돌아왔어.'))}
+function askUser(text){
+ const z=m(),r=z.input||{min:0,max:999};
+ return new Promise(res=>{
+  $('ask').innerHTML=`<div class="askbox"><span>🚀 ${esc(text)}${TR[text]&&two()?`<span class="tr" lang="${LANG}">${TR[text][LANG==='zh'?0:1]}</span>`:''}</span> <input id="askIn" type="number" min="${r.min}" max="${r.max}" aria-label="대답"><button class="primary" id="askOk">${ti('대답하기')}</button><span class="small muted">${r.min}~${r.max}</span></div>`;
+  const go=()=>{const v=Number($('askIn').value);if($('askIn').value===''||!Number.isInteger(v)||v<r.min||v>r.max){$('askIn').focus();status(t('{0}부터 {1} 사이의 숫자를 넣어 줘.',r.min,r.max),'bad');return}$('ask').innerHTML='';askGo=null;res(v)};
+  askGo=()=>res(null);$('askOk').onclick=go;$('askIn').onkeydown=e=>{if(e.key==='Enter')go()};$('askIn').focus()});
+}
+async function run(step){
+ if(running){if(stepMode&&stepGo){const g=stepGo;stepGo=null;g()}return}
+ if(!program.length){status(t('먼저 블록을 놓아 줘.'),'bad');return}
+ if(emptyBody(program)){status(t('속이 비어 있는 반복·만일 블록이 있어. 그 안에 블록을 넣어 줘.'),'bad');return}
+ const my=++token,z=m();errId=null;stepMode=step;st=newState(z);target=z.g||z.input||z.free?null:refState(mi,null);setRun(true);showVars();
+ status(t(step?'「다음 블록」을 누를 때마다 한 블록씩 실행돼.':'실행 중… 노란 테두리가 지금 실행하는 블록이야.'));
+ const g=exec(program,st,z);let r=g.next(),input=null;
+ while(!r.done){
+  if(my!==token)return;const e=r.value;hl=e.id;document.querySelector('#ws .blk.on')?.classList.remove('on');document.querySelector(`#ws .blk[data-id="${e.id}"]`)?.classList.add('on');draw();showVars();
+  if(e.ask!==undefined){status(t('우주선이 묻고 있어. 숫자를 넣고 「대답하기」를 눌러.'));const a=await askUser(e.ask);if(my!==token||a==null)return;if(input==null){input=a;if(z.input)target=refState(mi,a)}r=g.next(a);showVars();continue}
+  if(e.note)status(tj([e.note]));
+  if(stepMode)await new Promise(res=>stepGo=res);else await pause(e.slow?speed*2.4:e.flow?speed*.6:speed);
+  if(my!==token)return;r=g.next();
+ }
+ errId=st.err?hl:null;hl=null;st.turn=null;draw();showVars();setRun(false);judge(input);
+}
+function judge(input){
+ const z=m();
+ if(z.free){status(st.err?tj([st.err]):t('실행 끝! 숫자를 바꿔서 다른 무늬도 만들어 봐.'),st.err?'bad':'ok');if(!st.err){prof().wins[mi]={best:0};persist()}return}
+ const lose=(...items)=>{fails++;status(tj([errId?['<b>빨간 테두리 블록</b>에서 멈췄어. ']:null,...items,fails>=2?['<br><b>「생각 도우미」</b>에 설계도가 열렸어.']:null]),'bad')};
+ if(st.err)return lose(st.err);
+ if(z.g){if(!atGoal(st,z))return lose(['아직 기지에 도착하지 못했어. 기지까지 몇 칸 남았는지 세어 봐.']);return win()}
+ if(z.input&&input==null)return lose([REQ.ask]);
+ const why=(s,r)=>s.err?s.err:[r.segs.length&&!s.segs.length?'이럴 때는 움직여서 선을 그려야 해.':!r.segs.length&&s.segs.length?'이럴 때는 움직이지 않아야 해.':r.said.length&&!s.said.length?'이럴 때는 우주선이 말을 해야 해.':!r.said.length&&s.said.length?'이럴 때는 말하지 않아야 해.':'그림이 점선과 달라. 「한 블록씩」으로 어디서 달라지는지 찾아봐.'];
+ const r0=refState(mi,input);
+ if(!same(st,r0))return lose(input!=null?['대답이 {0}일 때: ',input]:null,why(st,r0));
+ for(const v of z.tests||[]){const s=simulate(program,z,[v]),r=refState(mi,v);if(!same(s,r)){st=s;target=r;draw();showVars();return lose(['네 대답({0})은 맞았어! 그런데 검사 로봇이 <b>{1}</b>을(를) 넣으니 달라졌어. 지금 화면이 그때 모습이야.<br>',input,v],why(s,r))}}
+ const miss=(z.req||[]).find(q=>!HAS[q](program));if(miss)return lose([REQ[miss]]);
+ win();
+}
+/* 문장틀: 한국어 문장에 고르는 칸, 아래에 번역 문장 */
+function frameHTML(f){
+ const key=f.map(x=>typeof x==='string'?x:'□').join(''),r=trOf(key);
+ return '<div class="frame" id="frame">'+f.map((x,i)=>typeof x==='string'?esc(x):`<select data-fi="${i}"><option value="">${tp('고르기')}</option>${[...x].sort().map(o=>`<option value="${o}">${tp(o)}</option>`).join('')}</select>`).join('')+(r?`<span class="tr" lang="${LANG}">${r.replace(/□/g,'____')}</span>`:'')+'</div>'}
+function win(){
+ const p=prof(),z=m(),n=count(program),before=p.wins[mi];p.wins[mi]={best:Math.min(before?before.best:999,n)};persist();errId=null;status(t(z.g?'기지 도착! 공격을 모두 피했어.':'성공! 목표와 똑같아.'),'ok');
+ const needFrame=z.frame&&!p.fr[mi];
+ modal(`<div class="eyebrow">MISSION ${String(mi+1).padStart(2,'0')} COMPLETE</div><h2>${tj([[z.title],[' 성공!']])}</h2>
+  ${badgeScene(before)}
+  <p style="margin:8px 0 0">${z.g?t('레이저와 적을 모두 피해 기지에 도착했어.'):z.tests?t('네 대답과 검사 로봇의 대답 {0}개를 모두 통과했어.',z.tests.length):t('네가 짠 코드가 목표와 똑같아.')}</p>
+  ${n<=z.short?'':`<p style="margin:6px 0 0;color:var(--gold);font-weight:700">${t('{0}블록 이내로 줄이면 황금 배지! (지금 {1}블록)',z.short,n)}</p>`}
+  ${needFrame?`<p style="margin:10px 0 0"><b>${t('배운 것을 문장으로 완성해 줘.')}</b></p>`+frameHTML(z.frame):''}
+  <div class="mact"><button class="primary" onclick="next()">${ti(mi===LAST?'수료식으로 가기':'다음 미션')}</button><button onclick="closeModal()">${ti('코드 더 다듬기')}</button></div><p id="frMsg" class="small" style="color:var(--bad);margin:8px 0 0"></p>`);
+}
+function next(){
+ const z=m(),p=prof(),f=$('frame');
+ if(f){let ok=true;f.querySelectorAll('select').forEach(s=>{const good=s.value===z.frame[Number(s.dataset.fi)][0];s.classList.toggle('bad',!good);if(!good)ok=false});if(!ok){$('frMsg').innerHTML=t('빨간 칸을 다시 골라 봐.');return}p.fr[mi]=1;persist()}
+ closeModal();if(mi===LAST){if(allWon(p))ceremony();else blueprint()}else choose(mi+1);
+}
+
+/* ───────── 도움 ───────── */
+const tfBox=()=>`<div class="tf"><div class="t">${t('<b>참</b> = 맞다 (진짜)')}<span class="muted small">${t('예: 15 &gt; 10 → 15는 10보다 크다. 맞아!')}</span></div><div class="f">${t('<b>거짓</b> = 아니다 (틀리다)')}<span class="muted small">${t('예: 5 &gt; 10 → 5는 10보다 크다? 아니야!')}</span></div></div>`;
+function hint(){
+ const z=m(),tier=fails>=4?3:fails>=2?2:1,p=prof();if(tier>1){p.hints[mi]=Math.max(p.hints[mi]||0,tier);persist()}
+ modal(`<h2>${t('생각 도우미')}</h2><p>${t(z.tip)}</p>${z.pal.includes('if')||z.pal.includes('ifelse')?tfBox():''}
+  <p>${t('① 우주선의 뾰족한 쪽이 앞이야. 돌기는 제자리에서 방향만 바꿔.')}</p><p>${t('② 「한 블록씩」으로 실행하면 어느 블록에서 달라지는지 보여.')}</p><p>${t(z.g?'③ 맞은 칸 바로 앞에서 무엇을 했어야 할까?':'③ 점선과 방어막 선이 처음 갈라지는 곳을 봐.')}</p>
+  ${tier===1?`<p class="muted small">${t('두 번 틀리면 숫자가 가려진 설계도가, 네 번 틀리면 전체 설계도가 열려.')}</p>`:tier===2?`<p>${t('<b>설계도</b> — 블록 순서는 이대로야. <b>?</b> 칸은 네가 채워.')}</p>`+roHTML(z.sol(),1):`<p>${t('<b>전체 설계도</b> — 그대로 만들고, 왜 그런지 한 블록씩 실행해 봐.')}</p>`+roHTML(z.sol(),0)}
+  <div class="mact"><button class="primary" onclick="closeModal()">${ti('다시 해 볼게')}</button></div>`);
+}
+function showPredict(){
+ const z=m(),q=z.predict;
+ modal(`<div class="eyebrow">${tp('먼저 생각하기')}</div><h2>${t(q.q)}</h2>${q.tf?tfBox():''}${roHTML(q.code(),0)}
+  <div class="opts ${q.opts.length===2?'two':''}">${q.opts.map((o,i)=>`<button class="opt" data-pi="${i}" onclick="pick(${i})">${o.draw?`<canvas id="pc${i}" width="160" height="160"></canvas>`:t(o.text)}</button>`).join('')}</div><p id="pMsg" style="font-weight:700;min-height:26px;margin:10px 0 0"></p>
+  <div class="mact"><button id="pGo" class="primary" disabled onclick="closeModal()">${ti('직접 만들어 보기')}</button></div>`);
+ q.opts.forEach((o,i)=>{if(o.draw)mini($('pc'+i),simulate(o.draw(),{start:[80,80]}),[80,80])});
+}
+function pick(i){
+ const q=m().predict,p=prof();if(p.pred[mi])return;p.pred[mi]={ok:i===q.ans};persist();
+ document.querySelectorAll('.opt').forEach((b,k)=>{b.disabled=true;if(k===q.ans)b.classList.add('right');else if(k===i)b.classList.add('wrong')});
+ $('pMsg').innerHTML=tj([[i===q.ans?'맞았어! ':'아쉬워. '],[q.why]]);$('pGo').disabled=false;
+}
+function help(){modal(`<h2>${t('이렇게 해')}</h2>
+ ${['① 가운데 <b>블록 꾸러미</b>에서 블록을 끌어 오른쪽 <b>블록 조립소</b>에 놓아. 한 번 눌러도 맨 아래에 붙어.','② <b>흰 칸</b>을 누르면 숫자나 글자를 바꿀 수 있어.','③ 반복·만일 블록 <b>안에</b> 넣으려면 「여기에 블록 넣기」 칸 위에 놓아.','④ 둥근 <b>값 블록</b>(대답, 변의 수, ÷)은 끌어서 흰 숫자 칸 위에 놓아. 값 블록을 누르면 빠져.','⑤ 블록을 조립소 밖으로 끌어내거나 × 를 누르면 지워져.','⑥ <b>▶ 실행</b>으로 확인해. <b>⏭ 한 블록씩</b>은 천천히 살펴볼 때 써.'].map(k=>`<p style="margin:7px 0">${t(k)}</p>`).join('')}
+ <div class="mact"><button class="primary" onclick="closeModal()">${ti('알겠어')}</button><button onclick="teacher()">선생님용</button></div>`)}
+function teacher(){
+ const rows=Object.keys(data.p).map(Number).sort((a,b)=>a-b).map(n=>{const p=data.p[n],w=Object.keys(p.wins).map(Number).filter(k=>k<=LAST),h=v=>Object.keys(p.hints).filter(k=>p.hints[k]===v).map(k=>Number(k)+1).join(', ')||'–',pr=Object.values(p.pred);
+  return `<tr><td>${n}번</td><td>${w.length} / ${TOTAL}</td><td>${w.length?Math.max(...w)+1:'–'}</td><td>${h(2)}</td><td>${h(3)}</td><td>${pr.filter(x=>x.ok).length} / ${pr.length}</td></tr>`}).join('');
+ modal(`<h2>선생님용 — 이 기기의 기록</h2>
+ <table><tr><th>번호</th><th>성공</th><th>마지막 미션</th><th>빈칸 설계도 본 미션</th><th>전체 설계도 본 미션</th><th>예상 맞힘</th></tr>${rows||'<tr><td colspan="6">기록 없음</td></tr>'}</table>
+ <p class="small muted">· 기록은 이 기기·이 브라우저에만 저장돼. 이름은 받지 않고, 어디로도 보내지 않아.<br>· 「전체 설계도 본 미션」은 도움을 받아 통과한 것이야. 스스로 한 것과 구분해서 보면 돼.<br>· 1~8 움직임, 9~11 방어막(각도), 12~16 선택, 17~21 변수·계산. 황금 배지(★)는 짧은 코드로 통과한 미션이야.<br>· 언어는 화면 위 🌐 버튼으로 언제든 바꿀 수 있어. 중·러 번역은 기계 번역이라 틀린 곳이 있을 수 있어.</p>
+ <div class="mact"><button onclick="data.open=!data.open;persist();teacher()">${data.open?'잠금 다시 걸기':'모든 미션 열기 (검토용)'}</button><button id="wipe" onclick="wipe()">이 기기 기록 지우기</button><button class="primary" onclick="closeModal();home()">닫기</button></div>`)}
+let wipeArm=false;
+function wipe(){if(!wipeArm){wipeArm=true;$('wipe').textContent='한 번 더 누르면 모두 지워져';setTimeout(()=>wipeArm=false,4000);return}wipeArm=false;data={p:{},open:false};persist();teacher()}
+
+/* ───────── 360의 비밀 ───────── */
+function renderQuiz(){
+ const z=m();
+ $('app').innerHTML=`${headHTML(z)}
+ <div class="goal"><div>${t(z.goal)}<small>${t('한 바퀴는 360°야. 네모를 그릴 때 돈 각도를 모두 더해 봐.')}</small></div></div>
+ <div class="quiz"><section class="panel"><h3>${ti('방어막 모양')}</h3><div class="shapes">
+   <div><canvas id="q0" width="160" height="160"></canvas>${t('네모 · 변 4개<br>90°씩 4번 돌기')}</div>
+   <div><canvas id="q1" width="160" height="160"></canvas>${t('세모 · 변 3개<br>?°씩 3번 돌기')}</div>
+   <div><canvas id="q2" width="160" height="160"></canvas>${t('육각형 · 변 6개<br>?°씩 6번 돌기')}</div></div>
+   <p class="small muted" style="margin:10px 2px 0">${t('노란 점에서 출발해서, 다 그리면 처음 방향으로 돌아와.')}</p></section>
+  <section class="panel"><h3>${ti('빈칸 채우기')}</h3>
+   <div class="qrow">① ${tp('네모')}: 90 + 90 + 90 + 90 = <input data-q="360" type="number"><small>${t('4 × 90 과 같아. 이게 한 바퀴야.')}</small></div>
+   <div class="qrow">② ${tp('세모')}: 3 × <input data-q="120" type="number"> = 360<small>${t('세모도 한 바퀴를 돌아. 3번에 나눠서.')}</small></div>
+   <div class="qrow">③ ${tp('육각형')}: 6 × <input data-q="60" type="number"> = 360</div>
+   <div class="qrow">④ ${ti('규칙: 한 번에 도는 각도')} = 360 ÷ <select data-q="변의 수"><option value="">${tp('고르기')}</option>${['변의 길이','변의 수','100'].map(o=>`<option value="${o}">${tp(o)}</option>`).join('')}</select></div>
+   <div class="tools"><button class="primary" onclick="checkQuiz()">${ti('확인')}</button><span id="qMsg" style="font-weight:700"></span></div></section></div>`;
+ [4,3,6].forEach((n,i)=>mini($('q'+i),simulate(poly(n,n===6?40:70),{start:[60,50]}),[60,50]));
+}
+function checkQuiz(){
+ let ok=true;document.querySelectorAll('[data-q]').forEach(e=>{const good=String(e.value).trim()===e.dataset.q;e.classList.toggle('bad',!good);e.classList.toggle('good',good);if(!good)ok=false});
+ if(!ok){fails++;const p=prof();if(fails>=2){p.hints[mi]=Math.max(p.hints[mi]||0,2);persist()}$('qMsg').innerHTML=t(fails>=2?'도움: 3 × ? = 360 이면 ? = 360 ÷ 3. 나눗셈으로 구해 봐.':'빨간 칸을 다시 계산해 봐.');$('qMsg').style.color='var(--bad)';return}
+ const before=prof().wins[mi];prof().wins[mi]={best:0};persist();
+ modal(`<div class="eyebrow">MISSION ${String(mi+1).padStart(2,'0')} COMPLETE</div><h2>${t('규칙을 찾았어!')}</h2>${badgeScene(before)}<p style="font-size:19px;font-weight:700;color:var(--gold)">${t('한 번에 도는 각도 = 360 ÷ 변의 수')}</p><p>${t('세모는 360 ÷ 3 = 120°. 다음 미션에서 바로 써 보자.')}</p><div class="mact"><button class="primary" onclick="closeModal();choose(${mi+1})">${ti('다음 미션')}</button></div>`);
+}
+
+/* ───────── 수료식 ───────── */
+const CHARS=['🚀','🛸','🤖','👩‍🚀','🧑‍🚀','👽','🐱','🐶','🦊','🐼','🐯','🐸','🦄','🐙','🐧','🐰','🦖','⭐'];
+function ceremony(pick){
+ token++;running=false;const p=prof();
+ if(!allWon(p)){modal(`<h2>${t('아직 남은 미션이 있어')}</h2><p>${t('21개 미션을 모두 끝내면 수료증을 받을 수 있어.')}</p>${closeBtn()}`);return}
+ if(!p.char||pick){
+  $('app').innerHTML=`<div class="ghead"><div><div class="eyebrow">${tp('수료식')}</div><h2>${t('모든 미션 완료! 수료증에 넣을 내 캐릭터를 골라.')}</h2></div><span class="sp"></span><button onclick="home()">${ti('미션 지도')}</button></div>
+  <div class="panel"><div class="chars">${CHARS.map(c=>`<button class="${p.char===c?'sel':''}" onclick="setChar('${c}')" aria-label="캐릭터 ${c}">${c}</button>`).join('')}</div><p class="muted" style="margin:0">${t('나중에 다시 바꿀 수 있어.')}</p></div>`;return}
+ const d=new Date(p.done||Date.now()),gold=M.filter((z,i)=>isGold(i,p)).length;if(!p.done){p.done=Date.now();persist()}
+ $('app').innerHTML=`<div class="ghead noprint"><div><div class="eyebrow">${tp('수료식')}</div><h2>${t('축하해! 수료증이 나왔어.')}</h2></div><span class="sp"></span><button onclick="window.print()" class="primary">${ti('인쇄하기')}</button><button onclick="ceremony(1)">${ti('캐릭터 바꾸기')}</button><button onclick="blueprint()">${ti('다음: 엔트리로 만들기')}</button><button onclick="home()">${ti('미션 지도')}</button></div>
+ <div id="cert"><div class="ct">SPACE EXPLORER</div><h2>${t('수 료 증')}</h2><div class="ch">${p.char}</div><div class="who">${ti('{0}번 대원',pilot)}</div><div class="nm">${tp('이름')} <span></span></div>
+  <p>${t('위 대원은 우주 탐험대의 미션 {0}개를 모두 마치고,<br>적의 공격을 피해 기지를 지키는 「방어막 기계」를 스스로 완성하였기에<br>이 증서를 드립니다.',TOTAL)}</p>
+  <div class="skills">${['순차','반복','선택','변수','계산'].map(k=>`<b>${ti(k)}</b>`).join('')}</div>
+  ${stripHTML(p,30)}
+  <div class="ft"><div>${t('배지 {0}개 · 황금 배지 {1}개',TOTAL,gold)}${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일</div><div>${t('우주 탐험대 본부')}</div></div></div>`;
+}
+function setChar(c){prof().char=c;persist();ceremony()}
+
+/* ───────── 엔트리 설계도 ───────── */
+function blueprint(){
+ token++;running=false;
+ const L=(cls,txt,ind=0)=>`<div class="blk ${cls}" style="margin-left:${ind*22}px"><div class="bh" style="cursor:default">${txt}</div></div>`,s=v=>`<span class="slot num">${v}</span>`,v=`<span class="rep r-var">${VARNAME}</span>`;
+ $('app').innerHTML=`<div class="ghead"><div><div class="eyebrow">${tp('마지막 단계')}</div><h2>${t('엔트리 설계도 — 이제 엔트리에서 혼자 만들어')}</h2></div><span class="sp"></span><button onclick="home()">${ti('미션 지도')}</button></div>
+ <div class="goal"><div>${t('엔트리를 열고, 아래 순서대로 「도형 그리기 기계」를 만들어 봐.')}<small>${t('블록 이름이 조금 달라. 오른쪽 표에서 찾아.')}</small></div></div>
+ <div class="quiz"><section class="panel entry"><h3>${ti('완성 코드 (엔트리 블록 이름)')}</h3>
+  ${L('flow hatb','▶ 시작하기 버튼을 클릭했을 때')}
+  ${L('data',s('변이 몇 개야?')+' 을(를) 묻고 대답 기다리기')}
+  ${L('data',VARNAME+' 를 <span class="rep r-ans">대답</span> (으)로 정하기')}
+  ${L('flow','만일 <span class="cond">'+v+'<span class="op">&lt;</span>'+s(3)+'</span> (이)라면')}
+  ${L('look',s('그릴 수 없어요')+' 을(를) 말하기',1)}
+  ${L('flow','아니면')}
+  ${L('flow pen','그리기 시작하기',1)}
+  ${L('flow',v+' 번 반복하기',1)}
+  ${L('move','이동 방향으로 '+s(60)+' 만큼 움직이기',2)}
+  ${L('move','방향을 <span class="rep r-calc">'+s(360)+'<span class="op">/</span>'+v+'</span> 만큼 회전하기',2)}
+ </section>
+ <section class="panel"><h3>${ti('여기 블록 → 엔트리에서 찾는 곳')}</h3>
+  <table><tr><th>여기</th><th>엔트리</th><th>꾸러미</th></tr>
+  <tr><td>오른쪽으로 90° 돌기</td><td>방향을 90° 만큼 회전하기</td><td>움직임</td></tr>
+  <tr><td>왼쪽으로 90° 돌기</td><td>방향을 270° 만큼 회전하기</td><td>움직임</td></tr>
+  <tr><td>이동 방향으로 ~ 움직이기</td><td>같음</td><td>움직임</td></tr>
+  <tr><td>~번 반복하기, 만일 ~ 아니면</td><td>같음</td><td>흐름</td></tr>
+  <tr><td>묻고 대답 기다리기, 대답</td><td>같음</td><td>자료</td></tr>
+  <tr><td>변의 수 (변수)</td><td>자료 → 변수 만들기 → 이름 「변의 수」</td><td>자료</td></tr>
+  <tr><td>( ) ÷ ( )</td><td>( ) / ( ) — 기호를 / 로 바꾸기</td><td>계산</td></tr>
+  <tr><td>( ) &lt; ( )</td><td>같음</td><td>판단</td></tr>
+  <tr><td>(선이 저절로 그려짐)</td><td>그리기 시작하기 를 꼭 넣기</td><td>붓</td></tr></table>
+  <p style="font-weight:700;margin-bottom:4px">${t('다 만들었으면 확인해 봐')}</p>
+  ${['□ 3을 넣으면 세모가 그려진다.','□ 6을 넣으면 육각형이 그려진다.','□ 2를 넣으면 「그릴 수 없어요」라고 말한다.','★ 도전: 다 그린 뒤에 「방어막 완성!」이라고 말하게 해 봐.'].map(k=>`<p style="margin:4px 0">${t(k)}</p>`).join('')}
+ </section></div>`;
+}
+
+/* ───────── 끌어 놓기 ───────── */
+let drag=null,ghost=null,marker=null,justDragged=false;
+function clearMarks(){marker?.remove();marker=null;document.querySelectorAll('.slot.hot').forEach(s=>s.classList.remove('hot'))}
+document.addEventListener('pointerdown',e=>{
+ if(running||e.button>0||!$('ws'))return;if(e.target.closest('input,select,button'))return;
+ const pal=e.target.closest('.pal [data-new],.pal [data-rep]'),bh=e.target.closest('#ws .bh');
+ const src=pal||(bh&&bh.parentElement);if(!src)return;
+ drag={src,x:e.clientX,y:e.clientY,on:false,kind:pal?(pal.dataset.rep?'rep':'new'):'mv',id:pal?null:Number(src.dataset.id),type:pal?(pal.dataset.new||pal.dataset.rep):null};
+});
+document.addEventListener('pointermove',e=>{
+ if(!drag)return;
+ if(!drag.on){if(Math.hypot(e.clientX-drag.x,e.clientY-drag.y)<7)return;drag.on=true;const el=drag.kind==='new'?drag.src.firstElementChild:drag.src,r=el.getBoundingClientRect();ghost=el.cloneNode(true);ghost.classList.add('dghost');drag.dx=Math.max(0,Math.min(drag.x-r.left,60));drag.dy=Math.max(0,Math.min(drag.y-r.top,30));document.body.appendChild(ghost);if(drag.kind==='mv')drag.src.style.opacity=.35}
+ e.preventDefault();ghost.style.left=(e.clientX-drag.dx)+'px';ghost.style.top=(e.clientY-drag.dy)+'px';locate(e.clientX,e.clientY);
+},{passive:false});
+function locate(mx,my){
+ clearMarks();drag.drop=null;const under=document.elementFromPoint(mx,my);drag.inside=!!(under&&under.closest('#ws'));
+ if(drag.kind==='rep'){const s=under&&under.closest('#ws .slot:not(.txt)');if(!s)return;if(drag.type==='calc'&&s.parentElement.closest('.r-calc'))return;s.classList.add('hot');drag.drop={slot:s};return}
+ /* 명령 블록: 끌고 있는 블록의 왼쪽 위 모서리가 가리키는 곳에 놓는다 */
+ const g=ghost.getBoundingClientRect(),x=g.left+12,y=g.top+9,el=document.elementFromPoint(x,y);
+ const mine=n=>drag.kind==='mv'&&n.closest(`.blk[data-id="${drag.id}"]`);
+ let list=null,i=-1;
+ if(el&&el.closest('#ws')){
+  const bar=el.closest('.bh,.bm,.bf'),c=bar&&bar.parentElement;
+  if(bar&&c.classList.contains('cblk')&&!mine(c)){
+   const r=bar.getBoundingClientRect(),lists=[...c.children].filter(k=>k.classList.contains('list'));
+   if(bar.classList.contains('bh')&&y>r.top+r.height*.45){list=lists[0];i=0}
+   else if(bar.classList.contains('bm')){if(y>r.top+r.height*.45){list=lists[1];i=0}else{list=lists[0];i=1e9}}
+   else if(bar.classList.contains('bf')&&y<r.top+r.height*.5){list=lists[lists.length-1];i=1e9}
+  }
+  if(!list)list=el.closest('#ws .list');
+ }
+ if(!list){if(!drag.inside)return;list=$('ws').querySelector('.list.root')}
+ if(mine(list))return;
+ const kids=[...list.children].filter(k=>k.classList.contains('blk')&&Number(k.dataset.id)!==drag.id);
+ if(i<0){i=kids.findIndex(k=>{const r=k.getBoundingClientRect();return y<r.top+Math.min(r.height/2,20)});if(i<0)i=kids.length}
+ i=Math.min(i,kids.length);
+ marker=document.createElement('div');marker.className='marker';list.insertBefore(marker,kids[i]||null);drag.drop={key:list.dataset.list,i};
+}
+function endDrag(e){
+ if(!drag)return;const d=drag;drag=null;
+ if(!d.on){if(d.kind==='new'&&e.type==='pointerup')addBlock(d.type,'root',program.length);else if(d.kind==='rep'&&e.type==='pointerup')status(t('둥근 값 블록은 끌어서 흰 숫자 칸 위에 놓아 줘.'));return}
+ ghost?.remove();ghost=null;d.src.style.opacity='';clearMarks();justDragged=true;setTimeout(()=>justDragged=false,0);
+ if(e.type!=='pointerup')return;
+ if(d.kind==='rep'){if(!d.drop)return;const s=d.drop.slot,f=find(Number(s.dataset.bid));if(!f)return;remember();const [o,k]=ref(f.b.args,s.dataset.path);o[k]=d.type==='ans'?{v:'ans'}:d.type==='var'?{v:'var'}:{v:'calc',a:10,op:'÷',b:10};changed();return}
+ if(d.kind==='new'){if(d.drop)addBlock(d.type,d.drop.key,d.drop.i);return}
+ if(!d.drop){if(!d.inside){remember();const f=find(d.id);f.list.splice(f.i,1);changed()}return}
+ remember();const f=find(d.id);f.list.splice(f.i,1);const L=getList(d.drop.key);L.splice(Math.min(d.drop.i,L.length),0,f.b);changed();
+}
+document.addEventListener('pointerup',endDrag);document.addEventListener('pointercancel',endDrag);
+function addBlock(k,key,i){
+ if(running)return;if(count(program)>=m().max){status(t('블록 칸이 가득 찼어. 반복으로 묶거나 필요 없는 블록을 지워 봐.'),'bad');return}
+ const L=getList(key);if(!L)return;remember();L.splice(Math.min(i,L.length),0,make(k));changed();
+}
+document.addEventListener('click',e=>{
+ if(running||justDragged||!e.target.closest('#ws'))return;
+ const del=e.target.closest('[data-del]');
+ if(del){const f=find(Number(del.dataset.del));if(f){remember();f.list.splice(f.i,1);changed()}return}
+ if(e.target.closest('select,input'))return;
+ const s=e.target.closest('.slot');if(!s)return;
+ if(s.classList.contains('num')||s.classList.contains('txt')){editSlot(s);return}
+ const f=find(Number(s.dataset.bid));if(!f)return;remember();const [o,k]=ref(f.b.args,s.dataset.path);o[k]=10;changed();
+});
+document.addEventListener('change',e=>{
+ const s=e.target.closest('#ws select');if(!s||running)return;const f=find(Number(s.dataset.bid));if(!f)return;remember();const [o,k]=ref(f.b.args,s.dataset.path);o[k]=s.value;changed();
+});
+function editSlot(s){
+ const f=find(Number(s.dataset.bid));if(!f)return;const isT=s.classList.contains('txt'),[o,k]=ref(f.b.args,s.dataset.path);
+ const inp=document.createElement('input');inp.className='edit';inp.type=isT?'text':'number';inp.value=o[k];if(isT)inp.maxLength=16;s.replaceChildren(inp);inp.focus();inp.select();
+ let fin=false;const done=()=>{if(fin)return;fin=true;let v=inp.value;if(isT)v=v.trim()||o[k];else{v=inp.value===''?o[k]:Number(v);if(!Number.isFinite(v))v=o[k];v=Math.max(-999,Math.min(999,Math.round(v*10)/10))}if(v!==o[k]){remember();o[k]=v}changed()};
+ inp.onblur=done;inp.onkeydown=e=>{if(e.key==='Enter')inp.blur()};
+}
+persist();home();
+</script>
+</body>
+</html>
